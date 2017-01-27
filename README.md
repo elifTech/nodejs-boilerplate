@@ -1,6 +1,7 @@
 # Express & mongoose REST API Boilerplate in ES6 with Code Coverage [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/sindresorhus/awesome)
 
-[![Build Status](https://img.shields.io/travis/elifTech/nodejs-boilerplate/master.svg?style=flat-square)](https://travis-ci.org/elifTech/nodejs-boilerplate)
+[![Build Status](https://travis-ci.com/elifTech/nodejs-boilerplate.svg?token=AcsTFx5TZNCpv2tdf53z&branch=master)](https://travis-ci.com/elifTech/nodejs-boilerplate)
+
 [![Coverage Status](https://img.shields.io/coveralls/KunalKapadia/express-mongoose-es6-rest-api/master.svg?style=flat-square)](https://coveralls.io/github/KunalKapadia/express-mongoose-es6-rest-api?branch=master)
 [![Code Climate](https://img.shields.io/codeclimate/github/KunalKapadia/express-mongoose-es6-rest-api.svg?style=flat-square)](https://codeclimate.com/github/KunalKapadia/express-mongoose-es6-rest-api)
 [![bitHound Overall Score](https://www.bithound.io/github/KunalKapadia/express-es6-rest-api-starter/badges/score.svg)](https://www.bithound.io/github/KunalKapadia/express-es6-rest-api-starter)
