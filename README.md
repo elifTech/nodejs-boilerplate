@@ -140,11 +140,6 @@ If you would prefer not to use any of our tooling, delete the following files fr
 
 * [Gulp recipes](https://github.com/gulpjs/gulp/tree/master/docs/recipes) - the official Gulp recipes directory includes a comprehensive list of guides for different workflows you can add to your project.
 
-## Contributing
+## Contact
 
-Contributions, questions and comments are all welcome and encouraged. For code contributions submit a pull request with unit test.
-
-## Meta
-
-Kunal Kapadia – [@kunalkapadia12](https://twitter.com/KunalKapadia12) – kunalkapadia12@gmail.com
-Vitalii Savchuk - 
+Vitalii Savchuk - vitalii.savchuk@eliftech.com
