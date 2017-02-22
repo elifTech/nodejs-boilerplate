@@ -32,7 +32,7 @@ Heavily inspired from [Egghead.io - How to Write an Open Source JavaScript Libra
 
 Clone the repo:
 ```sh
-git clone git@github.com:elifTech/nodejs-boilerplate.git
+git clone https://github.com/elifTech/nodejs-boilerplate.git
 cd nodejs-boilerplate
 ```
 
