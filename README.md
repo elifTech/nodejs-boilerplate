@@ -32,8 +32,8 @@ Heavily inspired from [Egghead.io - How to Write an Open Source JavaScript Libra
 
 Clone the repo:
 ```sh
-git clone git@github.com:KunalKapadia/express-mongoose-es6-rest-api.git
-cd express-mongoose-es6-rest-api
+git clone git@github.com:elifTech/nodejs-boilerplate.git
+cd nodejs-boilerplate
 ```
 
 Install yarn:
