@@ -52,7 +52,7 @@ Start server:
 yarn start
 
 # Selectively set DEBUG env var to get logs
-DEBUG=express-mongoose-es6-rest-api:* yarn start
+DEBUG=nodejs-boilerplate:* yarn start
 ```
 Refer [debug](https://www.npmjs.com/package/debug) to know how to selectively turn on logs.
 
