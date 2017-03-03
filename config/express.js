@@ -1,5 +1,6 @@
 import express from 'express';
 import logger from 'morgan';
+import path from 'path';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import compress from 'compression';
@@ -9,12 +10,17 @@ import httpStatus from 'http-status';
 import expressWinston from 'express-winston';
 import expressValidation from 'express-validation';
 import helmet from 'helmet';
+import 'twig';
+
+import features from './features';
 import winstonInstance from './winston';
 import routes from '../server/routes/index.route';
 import config from './env';
 import APIError from '../server/helpers/APIError';
 
 const app = express();
+
+app.set('views', path.join(__dirname, '../server/views'));
 
 if (config.env === 'development') {
   app.use(logger('dev'));
@@ -46,8 +52,16 @@ if (config.env === 'development') {
   }));
 }
 
+features.connect(app); // Feature flags
+
+app.use((req, res, next) => { // put it after authorization
+  const user = req.auth || {};
+  req.fflip.setForUser(user);
+  next();
+});
+
 // mount all routes on /api path
-app.use('/api', routes);
+app.use('/', routes);
 
 // if error is not an instanceOf APIError, convert it.
 app.use((err, req, res, next) => {

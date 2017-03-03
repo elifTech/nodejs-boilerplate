@@ -1,0 +1,93 @@
+<html>
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+        crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
+          crossorigin="anonymous"></script>
+
+  <style>
+    body {
+      padding: 20px;
+      background: #fafafa;
+    }
+
+    .custom-control-input:disabled ~ .custom-control-indicator {
+      background-color: #999 !important;
+    }
+  </style>
+  <script>
+    function changeFF(ff, value) {
+      var url = '/_ff/' + ff + '/' + (value ? '1' : '0');
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, false);
+      xhr.send();
+
+      if (xhr.status != 200) {
+        alert( xhr.status + ': ' + xhr.statusText );
+      }
+    }
+  </script>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="card">
+    <h4 class="card-header">Feature Flags Admin</h4>
+    <div class="card-block">
+
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Feature</th>
+          <th width="15%">Active Value</th>
+          <th width="15%">Original Value</th>
+          <th width="15%">Owner</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for feature in features %}
+          <tr class="activated">
+            <td>
+              <h5 class="text-primary">
+                {% if feature.refLink %}<a target="_blank" href="{{ feature.refLink }}">{% endif %}
+                {{ feature.name }}
+                {% if feature.refLink %}</a>{% endif %}
+              </h5>
+              <p class="card-text"><small class="text-muted">{{ feature.id }}</small></p>
+              <p class="card-text">{{ feature.description }}</p>
+            </td>
+            <td class="align-middle" align="center">
+
+              <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+                <input type="checkbox" class="custom-control-input" onclick="changeFF('{{ feature.id }}', this.checked);"
+                  {% if feature.currentEnabled %} checked{% endif %} />
+                <span class="custom-control-indicator"></span>
+                <span class="custom-control-description">{{ name }}</span>
+              </label>
+
+            </td>
+            <td class="align-middle" align="center">
+
+              <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+                <input type="checkbox" class="custom-control-input"
+                       disabled {% if feature.enabled %} checked{% endif %} />
+                <span class="custom-control-indicator"></span>
+              </label>
+            </td>
+            <td class="align-middle">{{ feature.owner }}</td>
+          </tr>
+        {% endfor %}
+
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
