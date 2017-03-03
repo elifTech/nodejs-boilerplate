@@ -1,0 +1,10 @@
+[
+  {
+    "id": "swaggerApiDocumentation",
+    "name": "Enable Swagger API Documentation",
+    "description": "If enabled API documentation will be avaliable at url <a href='/_docs' target='_blank'>/_docs</a>",
+    "owner": "Vitalii Savchuk <vitalii.savchuk@eliftech.com>",
+    "refLink": "https://github.com/elifTech/nodejs-boilerplate/issues/1",
+    "enabled": true
+  }
+]

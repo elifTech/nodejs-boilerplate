@@ -9,6 +9,8 @@ const plugins = gulpLoadPlugins();
 const paths = {
   js: ['./**/*.js', '!dist/**', '!node_modules/**', '!coverage/**'],
   nonJs: ['./package.json', './.gitignore', './.babelrc'],
+  views: ['./server/views/**/*.twig'],
+  configs: ['./config/*.json'],
   tests: './server/tests/*.js'
 };
 
@@ -18,10 +20,22 @@ gulp.task('clean', () =>
 );
 
 // Copy non-js files to dist
-gulp.task('copy', () =>
+gulp.task('copy', ['copyViews', 'copyConfig'], () =>
   gulp.src(paths.nonJs)
     .pipe(plugins.newer('dist'))
     .pipe(gulp.dest('dist'))
+);
+
+gulp.task('copyViews', () =>
+  gulp.src(paths.views)
+    // .pipe(plugins.newer('dist/server/views'))
+    .pipe(gulp.dest('dist/server/views'))
+);
+
+gulp.task('copyConfig', () =>
+  gulp.src(paths.configs)
+    // .pipe(plugins.newer('dist/server/views'))
+    .pipe(gulp.dest('dist/config'))
 );
 
 // Compile ES6 to ES5 and copy to dist
@@ -43,9 +57,9 @@ gulp.task('babel', () =>
 gulp.task('nodemon', ['copy', 'babel'], () =>
   plugins.nodemon({
     script: path.join('dist', 'index.js'),
-    ext: 'js',
+    ext: 'js twig',
     ignore: ['node_modules/**/*.js', 'dist/**/*.js'],
-    tasks: ['copy', 'babel']
+    tasks: ['copy', 'copyViews', 'babel']
   })
 );
 
