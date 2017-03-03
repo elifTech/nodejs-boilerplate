@@ -12,11 +12,7 @@ import expressValidation from 'express-validation';
 import helmet from 'helmet';
 import 'twig';
 
-// Feature flags
-import fflip from 'fflip';
-import FFlipExpressIntegration from 'fflip-express';
-
-import features from './features.json';
+import features from './features';
 import winstonInstance from './winston';
 import routes from '../server/routes/index.route';
 import config from './env';
@@ -56,20 +52,8 @@ if (config.env === 'development') {
   }));
 }
 
-// Feature flags
-fflip.config({
-  criteria: [
-    {
-      id: 'percentageOfUsers',
-      check: (user, percent) => (user.id % 100 < percent * 100)
-    }
-  ],
-  features
-});
-const fflipExpress = new FFlipExpressIntegration(fflip, {
-  manualRoutePath: '/_ff/:name/:action'
-});
-fflipExpress.connectAll(app);
+features.connect(app); // Feature flags
+
 app.use((req, res, next) => { // put it after authorization
   const user = req.auth || {};
   req.fflip.setForUser(user);
