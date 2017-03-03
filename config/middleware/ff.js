@@ -1,3 +1,5 @@
+import httpStatus from 'http-status';
+
 export default {
   has: hasFeature
 };
@@ -8,6 +10,6 @@ function hasFeature(featureId) {
       return next();
     }
 
-    return res.status(403).json({ message: 'Feature turned off', feature: featureId });
+    return res.json(httpStatus.FORBIDDEN, { message: 'Feature turned off', feature: featureId });
   };
 }
