@@ -1,16 +1,17 @@
 language: node_js
 
-# Sudo: false should make the builds faster, but collides with rabbitmq
-sudo: true
-
-dist: trusty
-
 node_js:
   - "4.6"
   - "6.9"
   - "7.2"
 services:
   - rabbitmq
+
+before_script:
+  - sudo rabbitmq-plugins enable rabbitmq_stomp
+  - sudo service rabbitmq-server restart
+  - sudo rabbitmqctl status
+  - sudo rabbitmq-plugins list
 
 cache:
   directories:
@@ -19,3 +20,6 @@ git:
   depth: 3
 after_script:
   - yarn report-coverage
+
+notifications:
+  slack: eliftech:rXNsG1csijJulkvTRPzVDU3w
