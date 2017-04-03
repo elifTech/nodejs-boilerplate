@@ -6,6 +6,7 @@ node_js:
   - "7.2"
 services:
   - rabbitmq
+  - mongodb
 
 before_script:
   - sudo rabbitmq-plugins enable rabbitmq_stomp
