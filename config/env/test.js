@@ -6,7 +6,7 @@ export default {
 
   mq: {
     stomp: {
-      host: '127.0.0.1',
+      host: 'localhost',
       port: 61613,
       login: 'guest',
       password: 'guest'
