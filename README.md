@@ -109,6 +109,7 @@ We recommend [pm2](http://pm2.keymetrics.io/) as it has several useful features 
 ## Documentation
 
 * [Feature flags](docs/feature-flags.md)
+* [MQ broker](docs/mq-broker.md)
 
 ## Logging
 
