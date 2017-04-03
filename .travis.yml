@@ -11,10 +11,6 @@ node_js:
   - "7.2"
 services:
   - rabbitmq
-  - mongodb
-
-before_script:
-  - rabbitmqadmin list queues vhost name node messages message_stats.publish_details.rate
 
 cache:
   directories:
