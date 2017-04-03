@@ -5,6 +5,7 @@ node_js:
   - "7.2"
 services:
   - mongodb
+  - rabbitmq
 cache:
   directories:
   - node_modules

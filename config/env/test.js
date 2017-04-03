@@ -8,8 +8,8 @@ export default {
     stomp: {
       host: 'localhost',
       port: 61613,
-      login: 'root',
-      password: '123456'
+      login: 'guest',
+      password: 'guest'
     }
   }
 };
