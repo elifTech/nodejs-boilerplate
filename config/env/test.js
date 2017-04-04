@@ -11,5 +11,20 @@ export default {
       login: 'guest',
       password: 'guest'
     }
+  },
+
+  mail: {
+    noReply: 'Chat <chat@eliftech.com>',
+    transport: {
+      service: 'eliftech.com',
+      host: 'smtp.mailgun.org',
+      port: 465,
+      secure: true,
+      auth: {
+        user: 'chat@eliftech.com',
+        pass: 'awdawd'
+      },
+      debug: false
+    }
   }
 };
