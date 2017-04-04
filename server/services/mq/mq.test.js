@@ -14,6 +14,8 @@ describe('## MqService', () => {
 
     service.subscribe((msg) => {
       expect(msg.message).to.equal('test');
+
+      service.stop();
       done();
     });
     service.push({
@@ -30,7 +32,11 @@ describe('## MqService', () => {
       if (msg.message === '+1') {
         i += 1;
       }
-      if (i === 3) done();
+
+      if (i === 3) {
+        service.stop();
+        done();
+      }
     });
     service.push({
       message: '+1'

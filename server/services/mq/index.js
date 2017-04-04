@@ -42,6 +42,7 @@ class MqService {
         return winston.error('Channel error', err.message);
       }
 
+      this.channel = channel;
       return channel.subscribe(subscribeHeaders, (error, message) => {
         if (error) {
           return winston.error('Subscribe error', error.message);
@@ -67,7 +68,8 @@ class MqService {
 
   push(body, next) {
     const message = JSON.stringify(body);
-    const callback = (typeof next === 'function') ? next : () => {};
+    const callback = (typeof next === 'function') ? next : () => {
+    };
 
     this.channelPool.channel((err, channel) => {
       if (err) {
@@ -90,5 +92,12 @@ class MqService {
 
   getOptions() {
     return this.options;
+  }
+
+  stop() {
+    if (this.channel) {
+      this.channel.close();
+    }
+    this.channelPool.close();
   }
 }
