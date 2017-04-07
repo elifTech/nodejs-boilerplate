@@ -8,7 +8,24 @@ export default {
   mq: {
     stomp: {
       host: 'localhost',
-      port: 21011
+      port: 61613,
+      login: 'guest',
+      password: 'guest'
+    }
+  },
+
+  mail: {
+    noReply: 'Chat <chat@eliftech.com>',
+    transport: {
+      service: 'eliftech.com',
+      host: 'smtp.mailgun.org',
+      port: 465,
+      secure: true,
+      auth: {
+        user: 'chat@eliftech.com',
+        pass: 'awdawd'
+      },
+      debug: false
     }
   }
 };

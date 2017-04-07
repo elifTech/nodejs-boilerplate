@@ -18,6 +18,10 @@
       2,
       "nofunc"
     ],
+    "max-len": [
+      2,
+      120
+    ],
     // TODO: turn on later
     "comma-dangle": [
       0
