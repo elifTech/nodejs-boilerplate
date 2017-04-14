@@ -17,6 +17,7 @@ import winstonInstance from './winston';
 import routes from '../server/routes/index.route';
 import config from './env';
 import APIError from '../server/helpers/APIError';
+import ResourceService from '../server/services/resources';
 
 const app = express();
 
@@ -25,6 +26,10 @@ app.set('views', path.join(__dirname, '../server/views'));
 if (config.env === 'development') {
   app.use(logger('dev'));
 }
+
+app.services = {
+  resources: new ResourceService()
+};
 
 // parse body params and attache them to req.body
 app.use(bodyParser.json());
@@ -59,6 +64,8 @@ app.use((req, res, next) => { // put it after authorization
   req.fflip.setForUser(user);
   next();
 });
+
+app.use('/', app.services.resources.getRouter());
 
 // mount all routes on /api path
 app.use('/', routes);

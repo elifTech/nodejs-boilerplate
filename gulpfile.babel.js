@@ -10,6 +10,7 @@ const paths = {
   js: ['./**/*.js', '!dist/**', '!node_modules/**', '!coverage/**'],
   nonJs: ['./package.json', './.gitignore', './.babelrc'],
   views: ['./server/views/**/*.twig'],
+  plugins: ['./server/plugins/**/*.*'],
   configs: ['./config/*.json'],
   tests: './server/tests/*.js'
 };
@@ -20,7 +21,7 @@ gulp.task('clean', () =>
 );
 
 // Copy non-js files to dist
-gulp.task('copy', ['copyViews', 'copyConfig'], () =>
+gulp.task('copy', ['copyViews', 'copyConfig', 'copyPlugins'], () =>
   gulp.src(paths.nonJs)
     .pipe(plugins.newer('dist'))
     .pipe(gulp.dest('dist'))
@@ -30,6 +31,12 @@ gulp.task('copyViews', () =>
   gulp.src(paths.views)
     // .pipe(plugins.newer('dist/server/views'))
     .pipe(gulp.dest('dist/server/views'))
+);
+
+gulp.task('copyPlugins', () =>
+  gulp.src(paths.plugins)
+    // .pipe(plugins.newer('dist/server/views'))
+    .pipe(gulp.dest('dist/server/plugins'))
 );
 
 gulp.task('copyConfig', () =>
@@ -57,9 +64,9 @@ gulp.task('babel', () =>
 gulp.task('nodemon', ['copy', 'babel'], () =>
   plugins.nodemon({
     script: path.join('dist', 'index.js'),
-    ext: 'js twig',
+    ext: 'js',
     ignore: ['node_modules/**/*.js', 'dist/**/*.js'],
-    tasks: ['copy', 'copyViews', 'babel']
+    tasks: ['copy', 'babel']
   })
 );
 

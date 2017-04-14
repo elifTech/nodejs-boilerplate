@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import async from 'async';
 import util from 'util';
 import config from './config/env';
 import app from './config/express';
@@ -27,9 +28,13 @@ if (config.MONGOOSE_DEBUG) {
 // module.parent check is required to support mocha watch
 // src: https://github.com/mochajs/mocha/issues/1912
 if (!module.parent) {
-  // listen on port config.port
-  app.listen(config.port, () => {
-    debug(`server started on port ${config.port} (${config.env})`);
+  async.auto({
+    resources: next => app.services.resources.loadResources(next)
+  }, () => {
+    // listen on port config.port
+    app.listen(config.port, () => {
+      debug(`server started on port ${config.port} (${config.env})`);
+    });
   });
 }
 

@@ -59,6 +59,7 @@
               </h5>
               <p class="card-text"><small class="text-muted">{{ feature.id }}</small></p>
               <p class="card-text">{{ feature.description }}</p>
+              {% if feature.criteria is defined %}<p class="card-text"><strong>Criteria: {{ feature.criteria|json_encode }}</strong></p>{% endif %}
             </td>
             <td class="align-middle" align="center">
 

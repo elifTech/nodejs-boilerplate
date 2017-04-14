@@ -6,5 +6,12 @@
     "owner": "Vitalii Savchuk <vitalii.savchuk@eliftech.com>",
     "refLink": "https://github.com/elifTech/nodejs-boilerplate/issues/1",
     "enabled": true
+  },
+  {
+    "id": "showUserMobilePhone",
+    "name": "Return `mobileNumber` in api response",
+    "description": "If enabled Users API will return mobileNumber field",
+    "owner": "Vitalii Savchuk <vitalii.savchuk@eliftech.com>",
+    "criteria": {"random": 0.50}
   }
 ]
