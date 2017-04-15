@@ -41,7 +41,7 @@ class TasksService {
   }
 
   registerPlugin(pluginFilename) {
-    winston.debug('Loading tasks plugins from file "%s"', pluginFilename);
+    winston.info('Loading tasks plugins from file "%s"', pluginFilename);
 
     const plugin = require(pluginFilename); // eslint-disable-line global-require
 
@@ -59,23 +59,25 @@ class TasksService {
   }
 
   runTask(name, options = {}) {
+    winston.info(`Task "${name}" pushed`, options);
+
     this.mqService.push({ name, options });
   }
 
-  processMessage({ name, options }, cb) {
+  processMessage({ name, options }) {
     const handlers = this.plugins[name] || [];
 
     if (!handlers.length) {
-      winston.debug(`Event "${name}" processed successfully without executing tasks`);
-      return cb();
+      return winston.info(`Event "${name}" processed successfully without executing tasks`);
     }
     return async.each(handlers, (handler, next) => {
       handler({ name, options }, next);
     }, (err) => {
-      if (err) { return cb(err); }
+      if (err) {
+        return winston.error(err);
+      }
 
-      winston.debug(`Event "${name}" processed successfully. Executed tasks - ${handlers.length}`);
-      return cb();
+      return winston.info(`Event "${name}" processed successfully. Executed tasks - ${handlers.length}`);
     });
   }
 

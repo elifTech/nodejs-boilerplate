@@ -2,12 +2,14 @@
   "model": "User",
   "acl": {
     "mobileNumber": {
-      "get?_id": ["showUserMobilePhone"]
+      "get?_id": ["showUserMobilePhone"],
+      "post": "*"
     },
     "__v": false,
     "*": {
       "get": "*",
-      "get?_id": "*"
+      "get?_id": "*",
+      "post": "*"
     }
   }
 }

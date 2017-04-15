@@ -7,10 +7,10 @@ import runSequence from 'run-sequence';
 const plugins = gulpLoadPlugins();
 
 const paths = {
-  js: ['./**/*.js', '!dist/**', '!node_modules/**', '!coverage/**'],
+  js: ['./server/**/*.js', './config/**/*.js', './index.js', '!dist/**', '!node_modules/**', '!coverage/**'],
   nonJs: ['./package.json', './.gitignore', './.babelrc'],
   views: ['./server/views/**/*.twig'],
-  plugins: ['./server/plugins/**/*.*'],
+  plugins: ['./server/plugins/**/*.json', './server/plugins/**/*.html', './server/plugins/**/*.css'],
   configs: ['./config/*.json'],
   tests: './server/tests/*.js'
 };

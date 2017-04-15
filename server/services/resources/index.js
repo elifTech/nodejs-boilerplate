@@ -5,16 +5,19 @@ import path from 'path';
 import async from 'async';
 import winston from 'winston';
 import mongoose from 'mongoose';
+import { EventEmitter } from 'events';
 import httpStatus from 'http-status';
 
 import getHandler from './handlers/get';
+import postHandler from './handlers/post';
 
 const allowQueryParams = [
   'search', 'page', 'perPage', 'sort', 'fields', 'flags'
 ];
 
 const handlers = {
-  get: getHandler
+  get: getHandler,
+  post: postHandler
 };
 
 export default
@@ -23,7 +26,9 @@ class ResourceService {
     this.options = options;
     this.options.pluginsPath = this.options.pluginsPath || path.join(__dirname, '..', '..', 'plugins', 'resources');
 
+    this.hooks = {};
     this.resources = {};
+    this.events = new EventEmitter();
   }
 
   loadResources(cb) {
@@ -58,6 +63,45 @@ class ResourceService {
         return next();
       }, cb);
     });
+  }
+
+  loadHooks(cb) {
+    const filesPath = path.join(this.options.pluginsPath, 'hooks');
+
+    fs.readdir(filesPath, (err, files) => {
+      if (err) {
+        return cb(err);
+      }
+
+      return async.each(files, (fileName, next) => {
+        if (path.extname(fileName) !== '.js') {
+          return next();
+        }
+        this.registerHook(path.join(filesPath, fileName));
+        return next();
+      }, cb);
+    });
+  }
+
+  registerHook(pluginFilename) {
+    winston.debug('Loading resources hook from file "%s"', pluginFilename);
+
+    const plugin = require(pluginFilename); // eslint-disable-line global-require
+
+    Object.keys(plugin).forEach((taskName) => {
+      const hookHandler = plugin[taskName];
+      if (!this.hooks[taskName]) {
+        this.hooks[taskName] = [];
+      }
+      this.hooks[taskName].push(hookHandler);
+    });
+  }
+
+  runHook(hookName, req, body, cb) {
+    if (!this.hooks[hookName]) {
+      return cb();
+    }
+    return async.eachLimit(this.hooks[hookName], 1, (hook, next) => hook(this, req, body, next), cb);
   }
 
   getResource(name) {
@@ -155,7 +199,7 @@ class ResourceService {
     }
 
     if (handlers[method]) {
-      return handlers[method](model, fields, schemaFields, req, res, next);
+      return handlers[method](this, model, fields, schemaFields, req, res, next);
     }
     return next();
   }

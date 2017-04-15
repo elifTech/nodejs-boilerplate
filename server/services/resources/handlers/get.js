@@ -2,6 +2,63 @@ import _ from 'lodash';
 import async from 'async';
 import NotFoundError from '../NotFoundError';
 
+export default
+function getHandler(service, model, fields, schemaFields, req, res, cb) {
+  res.set('x-service', 'resources');
+
+  const zipFields = _.mapValues(_.zipObject(fields), _.constant(1));
+  if (req.params._id || req.query.alias) {
+    if (req.params._id) {
+      req.query._id = req.params._id; // eslint-disable-line no-param-reassign
+    }
+
+    const parameter = getFilter(req, schemaFields, _.noop);
+    model.findOne(parameter, zipFields, (err, data) => {
+      if (err) {
+        if (err.name === 'CastError') {
+          return cb(new NotFoundError(`Resource "${req.params.resource} ${parameter}" not found.`));
+        }
+        return cb(err);
+      }
+      if (data) {
+        if (model.schema.paths.viewsCount) {
+          model.update(parameter, { $inc: { viewsCount: 1 } }, (error) => {
+            if (error) {
+              return req.log.error(error);
+            }
+            return null;
+          });
+        }
+        return res.json(data);
+      }
+      return cb(new NotFoundError(`Resource "${req.params.resource} ${parameter}" not found.`));
+    });
+  } else {
+    async.auto({
+      count: ['filter', ({ filter }, next) => {
+        if (req.query.flags && req.query.flags.indexOf('no-total-count') !== -1) {
+          return next(null, -1);
+        }
+        return model.count(filter, next);
+      }],
+      filter: _.partial(getFilter, req, schemaFields),
+      dataOptions: _.partial(getDataOptions, req),
+      items: ['filter', 'dataOptions', ({ filter, dataOptions }, next) => {
+        model.find(filter, zipFields, dataOptions, next);
+      }]
+    }, (err, data) => {
+      if (err) {
+        return cb(err);
+      }
+      if (data.count !== -1) {
+        res.set('x-total-count', data.count);
+      }
+      return res.json(data.items);
+    });
+  }
+}
+
+
 function getDataOptions(req, next) {
   const opts = {};
   const resourceOptions = req.resource.options || {};
@@ -77,58 +134,3 @@ function getFilter(req, schemaFields, next) {
   return filter;
 }
 
-export default
-function getHandler(model, fields, schemaFields, req, res, cb) {
-  res.set('x-service', 'resources');
-
-  const zipFields = _.mapValues(_.zipObject(fields), _.constant(1));
-  if (req.params._id || req.query.alias) {
-    if (req.params._id) {
-      req.query._id = req.params._id; // eslint-disable-line no-param-reassign
-    }
-
-    const parameter = getFilter(req, schemaFields, _.noop);
-    model.findOne(parameter, zipFields, (err, data) => {
-      if (err) {
-        if (err.name === 'CastError') {
-          return cb(new NotFoundError(`Resource "${req.params.resource} ${parameter}" not found.`));
-        }
-        return cb(err);
-      }
-      if (data) {
-        if (model.schema.paths.viewsCount) {
-          model.update(parameter, { $inc: { viewsCount: 1 } }, (error) => {
-            if (error) {
-              return req.log.error(error);
-            }
-            return null;
-          });
-        }
-        return res.json(data);
-      }
-      return cb(new NotFoundError(`Resource "${req.params.resource} ${parameter}" not found.`));
-    });
-  } else {
-    async.auto({
-      count: ['filter', ({ filter }, next) => {
-        if (req.query.flags && req.query.flags.indexOf('no-total-count') !== -1) {
-          return next(null, -1);
-        }
-        return model.count(filter, next);
-      }],
-      filter: _.partial(getFilter, req, schemaFields),
-      dataOptions: _.partial(getDataOptions, req),
-      items: ['filter', 'dataOptions', ({ filter, dataOptions }, next) => {
-        model.find(filter, zipFields, dataOptions, next);
-      }]
-    }, (err, data) => {
-      if (err) {
-        return cb(err);
-      }
-      if (data.count !== -1) {
-        res.set('x-total-count', data.count);
-      }
-      return res.json(data.items);
-    });
-  }
-}

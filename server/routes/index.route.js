@@ -1,5 +1,5 @@
 import express from 'express';
-import userRoutes from './user.route';
+// import userRoutes from './user.route';
 import authRoutes from './auth.route';
 
 // service routes
@@ -14,7 +14,7 @@ router.get('/health-check', (req, res) =>
 );
 
 // mount user routes at /users
-router.use('/api/users', userRoutes);
+// router.use('/api/users', userRoutes);
 
 // mount auth routes at /auth
 router.use('/api/auth', authRoutes);

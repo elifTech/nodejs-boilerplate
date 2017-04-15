@@ -29,8 +29,12 @@ if (config.MONGOOSE_DEBUG) {
 // src: https://github.com/mochajs/mocha/issues/1912
 if (!module.parent) {
   async.auto({
-    resources: next => app.services.resources.loadResources(next)
+    resources: next => app.services.resources.loadResources(next),
+    resourcesHooks: next => app.services.resources.loadHooks(next),
+    tasks: next => app.services.tasks.loadPlugins(next)
   }, () => {
+    app.services.tasks.subscribe();
+
     // listen on port config.port
     app.listen(config.port, () => {
       debug(`server started on port ${config.port} (${config.env})`);

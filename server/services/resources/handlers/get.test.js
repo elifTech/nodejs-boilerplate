@@ -4,8 +4,9 @@ import getHandler from './get';
 
 describe('## ResourceService getHandler', () => {
   const schemaFields = ['_id', 'username', 'mobilePhone'];
+  const resourceService = {
+  };
   const userResource = {
-
   };
 
   it('should be defined', () => {
@@ -25,7 +26,7 @@ describe('## ResourceService getHandler', () => {
       findOne: sinon.stub()
     };
 
-    getHandler(model, ['_id', 'username'], schemaFields, req, res);
+    getHandler(resourceService, model, ['_id', 'username'], schemaFields, req, res);
 
     expect(model.findOne.called).to.be.true; // eslint-disable-line no-unused-expressions
 
@@ -56,7 +57,7 @@ describe('## ResourceService getHandler', () => {
       find: sinon.stub()
     };
 
-    getHandler(model, ['_id', 'username'], schemaFields, req, res);
+    getHandler(resourceService, model, ['_id', 'username'], schemaFields, req, res);
 
     expect(model.count.called).to.be.true; // eslint-disable-line no-unused-expressions
     expect(model.find.called).to.be.true; // eslint-disable-line no-unused-expressions
