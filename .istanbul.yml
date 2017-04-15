@@ -1,6 +1,6 @@
 verbose: false
 instrumentation:
-  root: server
+  root: ./server
   excludes: ['dist/**', 'coverage/**', 'gulpfile.babel.js']
   include-all-sources: true
 reporting:

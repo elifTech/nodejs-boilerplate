@@ -37,7 +37,7 @@ function postHandler(service, model, fields, schemaFields, req, res, cb) {
       });
     }],
     save: ['validate', 'prepareModel', ({ prepareModel }, next) => {
-      prepareModel.save((err, savedItem) => {
+      prepareModel.save({ validateBeforeSave: false }, (err, savedItem) => {
         if (err) {
           return next(err);
         }

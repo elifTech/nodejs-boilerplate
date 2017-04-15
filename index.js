@@ -3,6 +3,7 @@ import async from 'async';
 import util from 'util';
 import config from './config/env';
 import app from './config/express';
+import './server/models';
 
 const debug = require('debug')('nodejs-boilerplate:index');
 

@@ -12,7 +12,6 @@ import expressValidation from 'express-validation';
 import helmet from 'helmet';
 import 'twig';
 import 'babel-polyfill';
-import '../server/models';
 
 import features from './features';
 import winstonInstance from './winston';
