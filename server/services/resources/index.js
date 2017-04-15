@@ -44,7 +44,7 @@ class ResourceService {
           return next();
         }
         const name = path.basename(fileName, '.json');
-        winston.info(`[ResourceService] loading resource "${name}"...`);
+        winston.debug(`[ResourceService] loading resource "${name}"...`);
 
         const fullPath = path.join(filesPath, fileName);
         const content = fs.readFileSync(fullPath, 'utf8');
@@ -59,7 +59,7 @@ class ResourceService {
         }
         this.resources[name] = resource;
 
-        winston.info(`[ResourceService] resource "${name}" loaded.`);
+        winston.debug(`[ResourceService] resource "${name}" loaded.`);
         return next();
       }, cb);
     });

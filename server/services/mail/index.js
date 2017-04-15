@@ -35,7 +35,7 @@ class MailService {
     this.controllers = {};
 
     this.transporter = nodemailer.createTransport(this.options.transport);
-    winston.info(`Mail service initialized "${this.options.transport.service}"`);
+    winston.debug(`Mail service initialized "${this.options.transport.service}"`);
   }
 
   loadControllers(app, cb) {
@@ -51,7 +51,7 @@ class MailService {
           return next();
         }
         const name = path.basename(fileName, '.js');
-        winston.info(`[MailService] loading controller "${name}"...`);
+        winston.debug(`[MailService] loading controller "${name}"...`);
 
         const controller = require(path.join(controllersPath, fileName)); // eslint-disable-line global-require
         if (!controller) {
@@ -59,7 +59,7 @@ class MailService {
         }
         this.controllers[path.basename(fileName, '.js')] = new controller(app); // eslint-disable-line new-cap
 
-        winston.info(`[MailService] controller "${name}" loaded.`);
+        winston.debug(`[MailService] controller "${name}" loaded.`);
         if (controller.init && typeof controller.init === 'function') {
           return controller.init(next);
         }
@@ -77,7 +77,7 @@ class MailService {
       }
 
       return async.each(files, (fileName, nextFile) => {
-        winston.info(`[MailService] loading partial "${fileName}"...`);
+        winston.debug(`[MailService] loading partial "${fileName}"...`);
 
         fs.readFile(path.join(partialPath, fileName), { encoding: 'utf8' }, (fileErr, data) => {
           if (fileErr) {
@@ -87,7 +87,7 @@ class MailService {
           const content = (path.extname(fileName) === '.css') ? cssmin(data) : data;
 
           handlebars.registerPartial(fileName, content);
-          winston.info(`[MailService] partial "${fileName}" loaded.`);
+          winston.debug(`[MailService] partial "${fileName}" loaded.`);
           return nextFile();
         });
       }, next);

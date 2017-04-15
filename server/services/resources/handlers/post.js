@@ -45,7 +45,7 @@ function postHandler(service, model, fields, schemaFields, req, res, cb) {
       });
     }],
     services: ['save', ({ save }, next) => {
-      winston.info(`Resource "${req.params.resource}" created.`, { resourceId: save._id.toString(), collectionName: req.params.resource });
+      winston.debug(`Resource "${req.params.resource}" created.`, { resourceId: save._id.toString(), collectionName: req.params.resource });
 
       service.events.emit('events', eventName, { _id: save._id.toString() });
       next();
