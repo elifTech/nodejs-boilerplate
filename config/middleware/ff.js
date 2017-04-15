@@ -10,6 +10,8 @@ function hasFeature(featureId) {
       return next();
     }
 
-    return res.json(httpStatus.FORBIDDEN, { message: 'Feature turned off', feature: featureId });
+    return res
+      .status(httpStatus.FORBIDDEN)
+      .json({ message: 'Feature turned off', feature: featureId });
   };
 }
