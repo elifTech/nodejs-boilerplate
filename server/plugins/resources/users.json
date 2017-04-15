@@ -3,13 +3,17 @@
   "acl": {
     "mobileNumber": {
       "get?_id": ["showUserMobilePhone"],
-      "post": "*"
+      "post": "*",
+      "put?_id": ["showUserMobilePhone"]
     },
+    "activationToken": false,
     "__v": false,
     "*": {
       "get": "*",
       "get?_id": "*",
-      "post": "*"
+      "put?_id": "*",
+      "post": "*",
+      "delete?_id": "*"
     }
   }
 }

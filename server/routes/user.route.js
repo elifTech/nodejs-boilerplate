@@ -94,12 +94,12 @@ router.route('/:userId')
  *       - name: username
  *         description: Username
  *         in: formData
- *         required: true
+ *         required: false
  *         type: string
  *       - name: mobileNumber
  *         description: Phone
  *         in: formData
- *         required: true
+ *         required: false
  *         type: string
  *     responses:
  *       200:

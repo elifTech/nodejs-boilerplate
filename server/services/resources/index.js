@@ -10,6 +10,8 @@ import httpStatus from 'http-status';
 
 import getHandler from './handlers/get';
 import postHandler from './handlers/post';
+import deleteHandler from './handlers/delete';
+import putHandler from './handlers/put';
 
 const allowQueryParams = [
   'search', 'page', 'perPage', 'sort', 'fields', 'flags'
@@ -17,7 +19,9 @@ const allowQueryParams = [
 
 const handlers = {
   get: getHandler,
-  post: postHandler
+  post: postHandler,
+  delete: deleteHandler,
+  put: putHandler
 };
 
 export default

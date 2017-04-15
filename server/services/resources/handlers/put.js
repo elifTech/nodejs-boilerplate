@@ -1,27 +1,31 @@
 import _ from 'lodash';
 import async from 'async';
-import mongoose from 'mongoose';
 import winston from 'winston';
 import httpStatus from 'http-status';
-import { getJsonFields, deepPick } from '../helpers';
+import { getJsonFields, deepPick, setAndUnsetQuery } from '../helpers';
 
 export default
-function postHandler(service, model, fields, schemaFields, req, res, cb) {
+function putHandler(service, model, fields, schemaFields, req, res, cb) {
   res.set('x-service', 'resources');
 
+  const eventName = `db.${req.params.resource}.update`;
+
+  const zipFields = _.mapValues(_.zipObject(fields), _.constant(1));
   const bodyFields = getJsonFields(req.body);
   const updateFields = _.without(_.intersection(fields, bodyFields), '__v');
-  let body = deepPick(req.body, updateFields);
 
-  const eventName = `db.${req.params.resource}.insert`;
+  let body = deepPick(req.body, updateFields);
+  body._id = req.params._id;
 
   async.auto({
+    resource: next => model.findById(req.params._id, zipFields, next),
     hooks: next => service.runHook(eventName, req, body, next),
-    prepareModel: ['hooks', ({ hooks }, next) => {
-      body._id = mongoose.Types.ObjectId(); // eslint-disable-line new-cap
+    prepareModel: ['hooks', 'resource', ({ resource }, next) => {
       body = _.pickBy(body, item => item !== null);
+      body = _.extend(body, { modifyDate: Date.now() });
 
-      next(null, new model(body)); // eslint-disable-line new-cap
+      setAndUnsetQuery(resource, body);
+      next(null, resource);
     }],
     validate: ['prepareModel', ({ prepareModel }, next) => {
       prepareModel.validate((err) => {
@@ -45,15 +49,14 @@ function postHandler(service, model, fields, schemaFields, req, res, cb) {
         return next(null, savedItem);
       });
     }]
-  }, (err, { save }) => {
+  }, (err, { resource }) => {
     if (err) {
       return cb(err);
     }
+    winston.debug(`Resource "${req.params.resource}" changed.`, { resourceId: resource._id.toString(), collectionName: req.params.resource });
 
-    winston.debug(`Resource "${req.params.resource}" created.`, { resourceId: save._id.toString(), collectionName: req.params.resource });
+    service.events.emit('events', eventName, { _id: resource._id.toString() });
 
-    service.events.emit('events', eventName, { _id: save._id.toString() });
-
-    return res.status(httpStatus.CREATED).json({ _id: save._id });
+    return res.status(httpStatus.NO_CONTENT).end();
   });
 }
