@@ -1,0 +1,19 @@
+{
+  "model": "User",
+  "acl": {
+    "mobileNumber": {
+      "get?_id": ["showUserMobilePhone"],
+      "post": "*",
+      "put?_id": ["showUserMobilePhone"]
+    },
+    "activationToken": false,
+    "__v": false,
+    "*": {
+      "get": "*",
+      "get?_id": "*",
+      "put?_id": "*",
+      "post": "*",
+      "delete?_id": "*"
+    }
+  }
+}

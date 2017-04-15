@@ -1,0 +1,13 @@
+{
+  "model": "User",
+  "acl": {
+    "mobileNumber": {
+      "get?_id": "*"
+    },
+    "__v": false,
+    "*": {
+      "get": "*",
+      "get?_id": "*"
+    }
+  }
+}

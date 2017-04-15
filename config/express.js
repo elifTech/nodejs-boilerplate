@@ -11,12 +11,15 @@ import expressWinston from 'express-winston';
 import expressValidation from 'express-validation';
 import helmet from 'helmet';
 import 'twig';
+import 'babel-polyfill';
 
 import features from './features';
 import winstonInstance from './winston';
 import routes from '../server/routes/index.route';
 import config from './env';
 import APIError from '../server/helpers/APIError';
+import TasksService from '../server/services/tasks';
+import ResourceService from '../server/services/resources';
 
 const app = express();
 
@@ -25,6 +28,15 @@ app.set('views', path.join(__dirname, '../server/views'));
 if (config.env === 'development') {
   app.use(logger('dev'));
 }
+
+app.services = {
+  tasks: new TasksService(),
+  resources: new ResourceService()
+};
+
+app.services.resources.events.on('events', (eventName, options) => {
+  app.services.tasks.runTask(eventName, options);
+});
 
 // parse body params and attache them to req.body
 app.use(bodyParser.json());
@@ -59,6 +71,8 @@ app.use((req, res, next) => { // put it after authorization
   req.fflip.setForUser(user);
   next();
 });
+
+app.use('/api', app.services.resources.getRouter());
 
 // mount all routes on /api path
 app.use('/', routes);

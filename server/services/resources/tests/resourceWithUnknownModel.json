@@ -1,0 +1,8 @@
+{
+  "model": "UnknownModel",
+  "acl": {
+    "*": {
+      "get": "*"
+    }
+  }
+}

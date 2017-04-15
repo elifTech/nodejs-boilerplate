@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import async from 'async';
@@ -22,18 +23,49 @@ const htmlMinOpts = {
   removeStyleLinkTypeAttributes: true
 };
 
-const juiceOpts = {
-};
+const juiceOpts = {};
 
 export default
 class MailService {
 
-  constructor() {
-    this.options = config.mail || {};
+  constructor(options = {}) {
+    this.options = _.assign(options, config.mail || {});
     this.options.pluginsPath = this.options.pluginsPath || path.join(__dirname, '..', '..', 'plugins', 'mail');
 
+    this.controllers = {};
+
     this.transporter = nodemailer.createTransport(this.options.transport);
-    winston.info(`Mail service initialized "${this.options.transport.service}"`);
+    winston.debug(`Mail service initialized "${this.options.transport.service}"`);
+  }
+
+  loadControllers(app, cb) {
+    const controllersPath = path.join(this.options.pluginsPath, 'controllers');
+
+    fs.readdir(controllersPath, (err, files) => {
+      if (err) {
+        return cb(err);
+      }
+
+      return async.each(files, (fileName, next) => {
+        if (path.extname(fileName) !== '.js') {
+          return next();
+        }
+        const name = path.basename(fileName, '.js');
+        winston.debug(`[MailService] loading controller "${name}"...`);
+
+        const controller = require(path.join(controllersPath, fileName)); // eslint-disable-line global-require
+        if (!controller) {
+          return next();
+        }
+        this.controllers[path.basename(fileName, '.js')] = new controller(app); // eslint-disable-line new-cap
+
+        winston.debug(`[MailService] controller "${name}" loaded.`);
+        if (controller.init && typeof controller.init === 'function') {
+          return controller.init(next);
+        }
+        return next();
+      }, cb);
+    });
   }
 
   loadPartials(next) {
@@ -45,7 +77,7 @@ class MailService {
       }
 
       return async.each(files, (fileName, nextFile) => {
-        winston.info(`[MailService] loading partial "${fileName}"...`);
+        winston.debug(`[MailService] loading partial "${fileName}"...`);
 
         fs.readFile(path.join(partialPath, fileName), { encoding: 'utf8' }, (fileErr, data) => {
           if (fileErr) {
@@ -55,14 +87,14 @@ class MailService {
           const content = (path.extname(fileName) === '.css') ? cssmin(data) : data;
 
           handlebars.registerPartial(fileName, content);
-          winston.info(`[MailService] partial "${fileName}" loaded.`);
+          winston.debug(`[MailService] partial "${fileName}" loaded.`);
           return nextFile();
         });
       }, next);
     });
   }
 
-  sendTemplate(templateName, sendToEmail, cb) {
+  sendTemplate(templateName, sendToEmail, options, cb) {
     const sendOptions = {
       from: this.options.noReply,
       to: sendToEmail,
@@ -73,29 +105,48 @@ class MailService {
     async.auto({
       htmlTemplate: next => this.getTemplate(templateName, 'html', next),
       txtTemplate: next => this.getTemplate(templateName, 'txt', next),
-      htmlEmail: ['htmlTemplate', (data, next) => {
-        if (!data.htmlTemplate) {
+      htmlEmail: ['htmlTemplate', 'model', ({ htmlTemplate, model }, next) => {
+        if (!htmlTemplate) {
           return next();
         }
 
-        let mailHtml = data.htmlTemplate({});
+        let mailHtml = htmlTemplate(model);
         return juice.juiceResources(mailHtml, juiceOpts, (err, html) => {
-          if (err) { return next(err); }
+          if (err) {
+            return next(err);
+          }
 
           mailHtml = minify(html, htmlMinOpts);
           sendOptions.html = mailHtml;
           return next();
         });
-      }]
-    }, (err, data) => {
+      }],
+      model: async (next) => {
+        const controller = this.controllers[templateName];
+        if (!controller || typeof controller.prepare !== 'function') {
+          return next(null, options || {});
+        }
+        controller.setSenderEmail(this.options.noReply);
+        controller.setEmail(sendToEmail);
+        controller.setSubject(sendOptions.subject);
+
+        const model = await controller.prepare(options || {});
+
+        sendOptions.from = controller.getSenderEmail();
+        sendOptions.to = controller.getEmail();
+        sendOptions.subject = controller.getSubject();
+
+        return next(null, _.assign(options, model));
+      }
+    }, (err, { model, htmlTemplate, txtTemplate }) => {
       if (err) {
         winston.error(err);
         return cb(err);
       }
 
-      if (data.txtTemplate) {
-        sendOptions.text = data.txtTemplate({});
-      } else if (!data.htmlTemplate) {
+      if (txtTemplate) {
+        sendOptions.text = txtTemplate(model);
+      } else if (!htmlTemplate) {
         return cb({ message: `Template ${templateName} not found` });
       }
 

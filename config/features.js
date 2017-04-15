@@ -4,8 +4,8 @@ import features from './features.json';
 
 const criteria = [
   {
-    id: 'percentageOfUsers',
-    check: (user, percent) => (user.id % 100 < percent * 100)
+    id: 'random',
+    check: (user, percent) => Math.random() > percent
   }
 ];
 

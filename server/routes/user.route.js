@@ -1,11 +1,3 @@
-import express from 'express';
-import validate from 'express-validation';
-import paramValidation from '../../config/param-validation';
-import userCtrl from '../controllers/user.controller';
-
-const router = express.Router(); // eslint-disable-line new-cap
-
-router.route('/')
 /**
  * @swagger
  * /users:
@@ -21,12 +13,6 @@ router.route('/')
  *           type: array
  *           items:
  *             $ref: '#/definitions/User'
- */
-  .get(userCtrl.list)
-
-/**
- * @swagger
- * /users:
  *   post:
  *     tags:
  *       - Users
@@ -45,17 +31,8 @@ router.route('/')
  *         required: true
  *         type: string
  *     responses:
- *       200:
- *         schema:
- *           type: array
- *           items:
- *             $ref: '#/definitions/User'
- */
-  .post(validate(paramValidation.createUser), userCtrl.create);
-
-router.route('/:userId')
-/**
- * @swagger
+ *       201:
+ *         description: Success
  * /users/{userId}:
  *   get:
  *     tags:
@@ -73,12 +50,6 @@ router.route('/:userId')
  *       200:
  *         schema:
  *           $ref: '#/definitions/User'
- */
-  .get(userCtrl.get)
-
-/**
- * @swagger
- * /users/{userId}:
  *   put:
  *     tags:
  *       - Users
@@ -94,23 +65,16 @@ router.route('/:userId')
  *       - name: username
  *         description: Username
  *         in: formData
- *         required: true
+ *         required: false
  *         type: string
  *       - name: mobileNumber
  *         description: Phone
  *         in: formData
- *         required: true
+ *         required: false
  *         type: string
  *     responses:
- *       200:
- *         schema:
- *           $ref: '#/definitions/User'
- */
-  .put(validate(paramValidation.updateUser), userCtrl.update)
-
-/**
- * @swagger
- * /users/{userId}:
+ *       204:
+ *         description: Success
  *   delete:
  *     tags:
  *       - Users
@@ -124,13 +88,6 @@ router.route('/:userId')
  *         required: true
  *         type: string
  *     responses:
- *       200:
- *         schema:
- *           $ref: '#/definitions/User'
+ *       204:
+ *         description: Success
  */
-  .delete(userCtrl.remove);
-
-/** Load user when API with userId route parameter is hit */
-router.param('userId', userCtrl.load);
-
-export default router;

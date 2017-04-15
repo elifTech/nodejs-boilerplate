@@ -18,7 +18,7 @@ class TasksService {
   loadPlugins(cb) {
     async.auto({
       fileList: (next) => {
-        winston.info('Loading tasks plugins started:', this.options.pluginsPath);
+        winston.debug('Loading tasks plugins started:', this.options.pluginsPath);
         dirWalk(this.options.pluginsPath, next);
       },
       plugins: ['fileList', (data, next) => {
@@ -33,7 +33,7 @@ class TasksService {
         if (pluginsCount === 0) {
           winston.warn('Tasks plugins loading procedure complete successfully, but plugins not found');
         } else {
-          winston.info('Tasks plugins loaded successfully - %s', pluginsCount);
+          winston.debug('Tasks plugins loaded successfully - %s', pluginsCount);
         }
         next();
       }]
@@ -59,23 +59,25 @@ class TasksService {
   }
 
   runTask(name, options = {}) {
+    winston.debug(`Task "${name}" pushed`, options);
+
     this.mqService.push({ name, options });
   }
 
-  processMessage({ name, options }, cb) {
+  processMessage({ name, options }) {
     const handlers = this.plugins[name] || [];
 
     if (!handlers.length) {
-      winston.debug(`Event "${name}" processed successfully without executing tasks`);
-      return cb();
+      return winston.debug(`Event "${name}" processed successfully without executing tasks`);
     }
     return async.each(handlers, (handler, next) => {
       handler({ name, options }, next);
     }, (err) => {
-      if (err) { return cb(err); }
+      if (err) {
+        return winston.error(err);
+      }
 
-      winston.debug(`Event "${name}" processed successfully. Executed tasks - ${handlers.length}`);
-      return cb();
+      return winston.debug(`Event "${name}" processed successfully. Executed tasks - ${handlers.length}`);
     });
   }
 

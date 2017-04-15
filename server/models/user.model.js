@@ -2,6 +2,7 @@ import Promise from 'bluebird';
 import mongoose from 'mongoose';
 import httpStatus from 'http-status';
 import APIError from '../helpers/APIError';
+import { uniqueValidationByModel } from '../helpers/validators';
 
 /**
  * User Schema
@@ -21,11 +22,20 @@ import APIError from '../helpers/APIError';
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true
+    required: [true, 'Username field required'],
+    validate: [{
+      isAsync: true,
+      validator: (value, cb) => uniqueValidationByModel(mongoose.model('User'), { username: value }, cb),
+      message: '{VALUE} with this {PATH} already exists'
+    }, {
+      validator: value => /[a-z]{1}.*/i.test(value),
+      message: '{PATH} should start from letter [a-z]'
+    }]
   },
+  activationToken: String,
+  removed: Date,
   mobileNumber: {
     type: String,
-    required: true,
     match: [/^[1-9][0-9]{9}$/, 'The value of path {PATH} ({VALUE}) is not a valid mobile number.']
   },
   createdAt: {

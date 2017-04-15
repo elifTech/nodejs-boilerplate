@@ -112,6 +112,7 @@ We recommend [pm2](http://pm2.keymetrics.io/) as it has several useful features 
 * [Feature flags](docs/feature-flags.md)
 * [MQ broker](docs/mq-broker.md)
 * [Tasks](docs/tasks.md)
+* [Resource](docs/resources.md)
 
 ## Code Coverage
 Get code coverage summary on executing `yarn test`
