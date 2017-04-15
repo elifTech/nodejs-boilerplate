@@ -28,11 +28,12 @@ const UserSchema = new mongoose.Schema({
       validator: (value, cb) => uniqueValidationByModel(mongoose.model('User'), { username: value }, cb),
       message: '{VALUE} with this {PATH} already exists'
     }, {
-      validator: value => /[a-z]{1}.*/i.test(value),
+      validator: value => /^[a-z].*$/i.test(value),
       message: '{PATH} should start from letter [a-z]'
     }]
   },
   activationToken: String,
+  activityDate: Date, // last user activity
   removed: Date,
   mobileNumber: {
     type: String,

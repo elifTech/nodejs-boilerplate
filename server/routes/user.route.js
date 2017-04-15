@@ -28,7 +28,7 @@
  *       - name: mobileNumber
  *         description: Phone
  *         in: formData
- *         required: true
+ *         required: false
  *         type: string
  *     responses:
  *       201:
@@ -61,11 +61,6 @@
  *         description: User id (ObjectId)
  *         in: path
  *         required: true
- *         type: string
- *       - name: username
- *         description: Username
- *         in: formData
- *         required: false
  *         type: string
  *       - name: mobileNumber
  *         description: Phone

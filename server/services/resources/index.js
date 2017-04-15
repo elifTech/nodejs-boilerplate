@@ -212,6 +212,9 @@ class ResourceService {
     if (_.isString(features) && features === '*') {
       return true;
     }
+    if (_.isBoolean(features) && features === false) {
+      return false;
+    }
 
     let isAllow = true;
     features.forEach((feature) => {

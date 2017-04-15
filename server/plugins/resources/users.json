@@ -6,6 +6,12 @@
       "post": "*",
       "put?_id": ["showUserMobilePhone"]
     },
+    "username": {
+      "get": "*",
+      "post": "*",
+      "get?_id": "*",
+      "put?_id": false
+    },
     "activationToken": false,
     "__v": false,
     "*": {

@@ -10,6 +10,7 @@ import httpStatus from 'http-status';
 import expressWinston from 'express-winston';
 import expressValidation from 'express-validation';
 import helmet from 'helmet';
+import { Server } from 'http';
 import 'twig';
 import 'babel-polyfill';
 
@@ -20,8 +21,12 @@ import config from './env';
 import APIError from '../server/helpers/APIError';
 import TasksService from '../server/services/tasks';
 import ResourceService from '../server/services/resources';
+import SocketService from '../server/services/socket';
 
 const app = express();
+const server = Server(app); // eslint-disable-line new-cap
+
+export { server };
 
 app.set('views', path.join(__dirname, '../server/views'));
 
@@ -31,7 +36,8 @@ if (config.env === 'development') {
 
 app.services = {
   tasks: new TasksService(),
-  resources: new ResourceService()
+  resources: new ResourceService(),
+  socket: new SocketService(server)
 };
 
 app.services.resources.events.on('events', (eventName, options) => {
