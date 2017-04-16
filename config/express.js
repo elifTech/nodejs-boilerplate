@@ -91,6 +91,8 @@ app.use(authMiddleware);
 app.use((req, res, next) => { // put it after authorization
   const user = req.user || {};
   req.fflip.setForUser(user);
+  res.summaryError = summaryError; // eslint-disable-line no-param-reassign
+  res.fieldsError = fieldsError; // eslint-disable-line no-param-reassign
   next();
 });
 
@@ -133,5 +135,16 @@ app.use((err, req, res, next) => // eslint-disable-line no-unused-vars
     stack: config.env === 'development' ? err.stack : {}
   })
 );
+
+function summaryError(message) {
+  this
+    .status(httpStatus.UNPROCESSABLE_ENTITY)
+    .json({ $summary: [{ msg: message }] });
+}
+function fieldsError(fieldsErrors) {
+  this
+    .status(httpStatus.UNPROCESSABLE_ENTITY)
+    .json(fieldsErrors);
+}
 
 export default app;

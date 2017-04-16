@@ -1,25 +1,39 @@
 {
   "model": "Account",
   "acl": {
+    "__v": false,
+
+    "extUser": false,
+    "extToken": false,
+    "extTokenSecret": false,
+
+    "accountType": false,
+    "activationDate": false,
+    "activationToken": false,
+
+    "salt": false,
+    "loginDate": false,
+    "password": {
+      "put?_id": ["isAdminUser", "*:owner"],
+      "post": ["isAdminUser"]
+    },
+    "activated": {
+      "get": ["isAdminUser"],
+      "get?_id": ["isAdminUser"],
+      "put?_id": ["isAdminUser"],
+      "post": ["isAdminUser"]
+    },
     "mobileNumber": {
       "get?_id": ["showUserMobilePhone"],
       "post": "*",
       "put?_id": ["showUserMobilePhone"]
     },
-    "username": {
-      "get": "*",
-      "post": "*",
-      "get?_id": "*",
-      "put?_id": false
-    },
-    "activationToken": false,
-    "__v": false,
     "*": {
-      "get": "*",
+      "get": ["isAdminUser"],
       "get?_id": "*",
-      "put?_id": "*",
-      "post": "*",
-      "delete?_id": "*"
+      "put?_id": ["isAdminUser", "*:owner"],
+      "post": ["isAdminUser"],
+      "delete?_id": ["isAdminUser"]
     }
   }
 }

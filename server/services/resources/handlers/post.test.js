@@ -36,7 +36,7 @@ describe('## ResourceService postHandler', () => {
     };
     const req = {
       params: { resource: 'accounts' },
-      body: { username: '123' }
+      body: { username: '123', password: '1' }
     };
     const res = {
       set: sinon.stub(),
@@ -51,7 +51,7 @@ describe('## ResourceService postHandler', () => {
       })
     };
 
-    postHandler(service, Account, ['username'], ['username'], req, res);
+    postHandler(service, Account, ['username', 'password'], ['username', 'password'], req, res);
   });
 
   it('should save model', (done) => {

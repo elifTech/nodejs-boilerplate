@@ -13,5 +13,19 @@
     "description": "If enabled Users API will return mobileNumber field",
     "owner": "Vitalii Savchuk <vitalii.savchuk@eliftech.com>",
     "criteria": {"random": 0.50}
+  },
+  {
+    "id": "loginWithEmail",
+    "name": "User can login with his email",
+    "description": "If enabled user can login with his email",
+    "owner": "Vitalii Savchuk <vitalii.savchuk@eliftech.com>",
+    "enabled": false
+  },
+  {
+    "id": "isAdminUser",
+    "name": "Flag: Show that this user is admin",
+    "description": "If enabled user has admin permissions",
+    "owner": "Vitalii Savchuk <vitalii.savchuk@eliftech.com>",
+    "criteria": {"isAdminUser": "admin"}
   }
 ]

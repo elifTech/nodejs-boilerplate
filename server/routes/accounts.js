@@ -12,18 +12,33 @@
  *         schema:
  *           type: array
  *           items:
- *             $ref: '#/definitions/User'
+ *             $ref: '#/definitions/Account'
  *   post:
  *     tags:
  *       - Accounts
- *     description: Create new user
+ *     description: Create new account
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: username
+ *       - name: accountname
  *         description: Username
  *         in: formData
  *         required: true
+ *         type: string
+ *       - name: password
+ *         description: Password
+ *         in: formData
+ *         required: true
+ *         type: string
+ *       - name: activated
+ *         description: Is account activated
+ *         in: formData
+ *         required: false
+ *         type: boolean
+ *       - name: email
+ *         description: Email
+ *         in: formData
+ *         required: false
  *         type: string
  *       - name: mobileNumber
  *         description: Phone
@@ -33,32 +48,32 @@
  *     responses:
  *       201:
  *         description: Success
- * /accounts/{userId}:
+ * /accounts/{accountId}:
  *   get:
  *     tags:
  *       - Accounts
- *     description: Get user
+ *     description: Get account
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: userId
- *         description: User id (ObjectId)
+ *       - name: accountId
+ *         description: Account id (ObjectId)
  *         in: path
  *         required: true
  *         type: string
  *     responses:
  *       200:
  *         schema:
- *           $ref: '#/definitions/User'
+ *           $ref: '#/definitions/Account'
  *   put:
  *     tags:
  *       - Accounts
- *     description: Update user
+ *     description: Update account
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: userId
- *         description: User id (ObjectId)
+ *       - name: accountId
+ *         description: Account id (ObjectId)
  *         in: path
  *         required: true
  *         type: string
@@ -73,12 +88,12 @@
  *   delete:
  *     tags:
  *       - Accounts
- *     description: Delete user
+ *     description: Delete account
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: userId
- *         description: User id (ObjectId)
+ *       - name: accountId
+ *         description: Account id (ObjectId)
  *         in: path
  *         required: true
  *         type: string

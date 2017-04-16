@@ -4486,6 +4486,10 @@ punycode@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
 
+pwd@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/pwd/-/pwd-1.1.0.tgz#e71556c21b7e81e9d673ae786f5acb9290ebb533"
+
 qs@6.2.0, qs@^6.1.0, qs@~6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.2.0.tgz#3b7848c03c2dece69a9522b0fae8c4126d745f3b"
