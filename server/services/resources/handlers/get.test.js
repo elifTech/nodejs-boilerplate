@@ -16,7 +16,7 @@ describe('## ResourceService getHandler', () => {
   it('should get resource by id', () => {
     const req = {
       query: {},
-      params: { _id: 1, resource: 'users' },
+      params: { _id: 1, resource: 'accounts' },
       resource: userResource
     };
     const res = {
@@ -46,7 +46,7 @@ describe('## ResourceService getHandler', () => {
   it('should get resource list', () => {
     const req = {
       query: {},
-      params: { resource: 'users' },
+      params: { resource: 'accounts' },
       resource: userResource
     };
     const res = {

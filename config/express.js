@@ -10,13 +10,15 @@ import httpStatus from 'http-status';
 import expressWinston from 'express-winston';
 import expressValidation from 'express-validation';
 import helmet from 'helmet';
+import expressJwt from 'express-jwt';
 import { Server } from 'http';
 import 'twig';
 import 'babel-polyfill';
 
+import authMiddleware from './middleware/auth';
 import features from './features';
 import winstonInstance from './winston';
-import routes from '../server/routes/index.route';
+import routes from '../server/routes';
 import config from './env';
 import APIError from '../server/helpers/APIError';
 import TasksService from '../server/services/tasks';
@@ -72,8 +74,22 @@ if (config.env === 'development') {
 
 features.connect(app); // Feature flags
 
+app.use(expressJwt({
+  secret: config.jwtSecret,
+  credentialsRequired: false,
+  userProperty: 'auth',
+  getToken: (req) => {
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+      return req.headers.authorization.split(' ')[1];
+    } else if (req.query && req.query.token) {
+      return req.query.token;
+    }
+    return null;
+  }
+}));
+app.use(authMiddleware);
 app.use((req, res, next) => { // put it after authorization
-  const user = req.auth || {};
+  const user = req.user || {};
   req.fflip.setForUser(user);
   next();
 });

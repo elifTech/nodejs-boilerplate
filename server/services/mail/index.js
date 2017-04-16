@@ -35,7 +35,11 @@ class MailService {
     this.controllers = {};
 
     this.transporter = nodemailer.createTransport(this.options.transport);
-    winston.debug(`Mail service initialized "${this.options.transport.service}"`);
+    this.log(`Mail service initialized "${this.options.transport.service}"`);
+  }
+
+  log(message) { // eslint-disable-line class-methods-use-this
+    winston.info(`[MailService] ${message}`);
   }
 
   loadControllers(app, cb) {
@@ -51,7 +55,7 @@ class MailService {
           return next();
         }
         const name = path.basename(fileName, '.js');
-        winston.debug(`[MailService] loading controller "${name}"...`);
+        this.log(`[MailService] loading controller "${name}"...`);
 
         const controller = require(path.join(controllersPath, fileName)); // eslint-disable-line global-require
         if (!controller) {
@@ -59,7 +63,7 @@ class MailService {
         }
         this.controllers[path.basename(fileName, '.js')] = new controller(app); // eslint-disable-line new-cap
 
-        winston.debug(`[MailService] controller "${name}" loaded.`);
+        this.log(`[MailService] controller "${name}" loaded.`);
         if (controller.init && typeof controller.init === 'function') {
           return controller.init(next);
         }
@@ -77,7 +81,7 @@ class MailService {
       }
 
       return async.each(files, (fileName, nextFile) => {
-        winston.debug(`[MailService] loading partial "${fileName}"...`);
+        this.log(`[MailService] loading partial "${fileName}"...`);
 
         fs.readFile(path.join(partialPath, fileName), { encoding: 'utf8' }, (fileErr, data) => {
           if (fileErr) {
@@ -87,7 +91,7 @@ class MailService {
           const content = (path.extname(fileName) === '.css') ? cssmin(data) : data;
 
           handlebars.registerPartial(fileName, content);
-          winston.debug(`[MailService] partial "${fileName}" loaded.`);
+          this.log(`[MailService] partial "${fileName}" loaded.`);
           return nextFile();
         });
       }, next);
@@ -156,7 +160,7 @@ class MailService {
           return cb(sendErr);
         }
 
-        winston.debug(`Message ${templateName} sent to ${sendToEmail}: ${info.response}`);
+        this.log(`Message ${templateName} sent to ${sendToEmail}: ${info.response}`);
         return cb();
       });
     });

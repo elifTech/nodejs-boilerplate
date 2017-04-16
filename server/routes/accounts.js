@@ -1,10 +1,10 @@
 /**
  * @swagger
- * /users:
+ * /accounts:
  *   get:
  *     tags:
- *       - Users
- *     description: Get list of users
+ *       - Accounts
+ *     description: Get list of accounts
  *     produces:
  *       - application/json
  *     responses:
@@ -15,7 +15,7 @@
  *             $ref: '#/definitions/User'
  *   post:
  *     tags:
- *       - Users
+ *       - Accounts
  *     description: Create new user
  *     produces:
  *       - application/json
@@ -33,10 +33,10 @@
  *     responses:
  *       201:
  *         description: Success
- * /users/{userId}:
+ * /accounts/{userId}:
  *   get:
  *     tags:
- *       - Users
+ *       - Accounts
  *     description: Get user
  *     produces:
  *       - application/json
@@ -52,7 +52,7 @@
  *           $ref: '#/definitions/User'
  *   put:
  *     tags:
- *       - Users
+ *       - Accounts
  *     description: Update user
  *     produces:
  *       - application/json
@@ -72,7 +72,7 @@
  *         description: Success
  *   delete:
  *     tags:
- *       - Users
+ *       - Accounts
  *     description: Delete user
  *     produces:
  *       - application/json

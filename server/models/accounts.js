@@ -4,12 +4,14 @@ import httpStatus from 'http-status';
 import APIError from '../helpers/APIError';
 import { uniqueValidationByModel } from '../helpers/validators';
 
+const modelName = 'Account';
+
 /**
- * User Schema
+ * Account
  *
  * @swagger
  * definition:
- *   User:
+ *   Account:
  *     properties:
  *       username:
  *         type: string
@@ -19,13 +21,13 @@ import { uniqueValidationByModel } from '../helpers/validators';
  *         type: string
  *         format: date
  */
-const UserSchema = new mongoose.Schema({
+const Schema = new mongoose.Schema({
   username: {
     type: String,
     required: [true, 'Username field required'],
     validate: [{
       isAsync: true,
-      validator: (value, cb) => uniqueValidationByModel(mongoose.model('User'), { username: value }, cb),
+      validator: (value, cb) => uniqueValidationByModel(mongoose.model(modelName), { username: value }, cb),
       message: '{VALUE} with this {PATH} already exists'
     }, {
       validator: value => /^[a-z].*$/i.test(value),
@@ -55,17 +57,17 @@ const UserSchema = new mongoose.Schema({
 /**
  * Methods
  */
-UserSchema.method({
+Schema.method({
 });
 
 /**
  * Statics
  */
-UserSchema.statics = {
+Schema.statics = {
   /**
    * Get user
    * @param {ObjectId} id - The objectId of user.
-   * @returns {Promise<User, APIError>}
+   * @returns {Promise<Account, APIError>}
    */
   get(id) {
     return this.findById(id)
@@ -80,10 +82,10 @@ UserSchema.statics = {
   },
 
   /**
-   * List users in descending order of 'createdAt' timestamp.
-   * @param {number} skip - Number of users to be skipped.
-   * @param {number} limit - Limit number of users to be returned.
-   * @returns {Promise<User[]>}
+   * List acounts in descending order of 'createdAt' timestamp.
+   * @param {number} skip - Number of accounts to be skipped.
+   * @param {number} limit - Limit number of accounts to be returned.
+   * @returns {Promise<Account[]>}
    */
   list({ skip = 0, limit = 50 } = {}) {
     return this.find()
@@ -95,6 +97,6 @@ UserSchema.statics = {
 };
 
 /**
- * @typedef User
+ * @typedef Account
  */
-export default mongoose.model('User', UserSchema);
+export default mongoose.model(modelName, Schema);

@@ -4,7 +4,7 @@ import socketIO from 'socket.io';
 import winston from 'winston';
 import config from '../../../config/env';
 
-import User from '../../models/user.model';
+import Account from '../../models/accounts';
 import MqService from '../mq';
 
 export default
@@ -18,6 +18,10 @@ class SocketService {
     this.io = socketIO(httpServer, {});
   }
 
+  log(message) { // eslint-disable-line class-methods-use-this
+    winston.info(`[SocketService] ${message}`);
+  }
+
   addSocket(socket) {
     const id = socket.account._id.toString();
 
@@ -25,7 +29,7 @@ class SocketService {
     this.sockets[id].push(socket);
 
     const stat = this.getSocketsStat();
-    winston.debug(`Connected ${stat.totalSockets} sockets from ${stat.totalAccounts} accounts`);
+    this.log(`Connected ${stat.totalSockets} sockets from ${stat.totalAccounts} accounts`);
   }
 
   getSocketsStat() {
@@ -50,7 +54,7 @@ class SocketService {
     }
 
     const stat = this.getSocketsStat();
-    winston.debug(`Connected ${stat.totalSockets} sockets from ${stat.totalAccounts} accounts`);
+    this.log(`Connected ${stat.totalSockets} sockets from ${stat.totalAccounts} accounts`);
   }
 
   sendToAccount(accountId, event, data = {}, endpoint = null) {
@@ -61,30 +65,30 @@ class SocketService {
     const handshake = socket.request;
 
     if (typeof handshake._query === 'undefined' || typeof handshake._query.token === 'undefined' || !handshake._query.token.length) {
-      winston.debug('Unauthorized socket connection');
+      this.log('Unauthorized socket connection');
       return next(null, new Error('unauthorized'));
     }
     const payload = jwt.decode(handshake._query.token, config.jwtSecret);
 
     if (!payload) {
-      winston.debug('Unauthorized socket connection');
+      this.log('Unauthorized socket connection');
       return next(null, new Error('unauthorized'));
     }
 
     const accountQuery = { _id: payload._id, removed: { $exists: false } };
-    return User.findOne(accountQuery, 'username activityDate', (err, account) => {
+    return Account.findOne(accountQuery, 'username activityDate', (err, account) => {
       if (err) {
         return next(err);
       }
       if (!account) {
-        winston.debug('Unauthorized socket connection (invalid token)');
+        this.log('Unauthorized socket connection (invalid token)');
         return next(null, new Error('unauthorized'));
       }
 
       socket.account = account.toObject(); // eslint-disable-line no-param-reassign
 
       if (!account.activityDate || Date.now() - account.activityDate.getTime() > 5 * 60 * 1000) {
-        winston.debug(`Updating activity date ${account.username}`);
+        this.log(`Updating activity date ${account.username}`);
 
         account.update({ activityDate: Date.now() }, (error) => {
           if (error) {
@@ -112,8 +116,8 @@ class SocketService {
       this.sendToAccount(socket.account._id, args[0], args[1], socket.handshake.headers['x-forwarded-for'] || socket.handshake.address);
     };
 
-    winston.debug(`Socket connection from "${name}" started`);
-    socket.on('disconnect', () => winston.debug(`Socket connection from "${name}" closed`));
+    this.log(`Socket connection from "${name}" started`);
+    socket.on('disconnect', () => this.log(`Socket connection from "${name}" closed`));
   }
 
   onIncomingMessage(message) {
@@ -121,7 +125,7 @@ class SocketService {
     const sockets = this.sockets[accountId];
 
     if (sockets && sockets.length > 0) {
-      winston.debug(`Sending event "${message.event}" to account ${accountId} sockets - ${sockets.length}`);
+      this.log(`Sending event "${message.event}" to account ${accountId} sockets - ${sockets.length}`);
 
       sockets.forEach((socket) => {
         if (typeof socket !== 'undefined' && typeof socket.emit === 'function') {
@@ -132,12 +136,12 @@ class SocketService {
   }
 
   init(next) {
-    winston.debug('Initializing socket service...');
+    this.log('Initializing socket service...');
 
     this.io.use(this.socketMiddleware.bind(this));
     this.io.on('connection', this.onNewConnection.bind(this));
 
-    winston.debug('Socket service initialized successfully');
+    this.log('Socket service initialized successfully');
     this.mqService.subscribe(this.onIncomingMessage.bind(this));
     next();
   }

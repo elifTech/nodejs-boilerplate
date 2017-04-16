@@ -35,6 +35,10 @@ class ResourceService {
     this.events = new EventEmitter();
   }
 
+  log(message) { // eslint-disable-line class-methods-use-this
+    winston.info(`[ResourceService] ${message}`);
+  }
+
   loadResources(cb) {
     const filesPath = this.options.pluginsPath;
 
@@ -48,7 +52,7 @@ class ResourceService {
           return next();
         }
         const name = path.basename(fileName, '.json');
-        winston.debug(`[ResourceService] loading resource "${name}"...`);
+        this.log(`Loading resource "${name}"...`);
 
         const fullPath = path.join(filesPath, fileName);
         const content = fs.readFileSync(fullPath, 'utf8');
@@ -63,7 +67,7 @@ class ResourceService {
         }
         this.resources[name] = resource;
 
-        winston.debug(`[ResourceService] resource "${name}" loaded.`);
+        this.log(`Resource "${name}" loaded.`);
         return next();
       }, cb);
     });
@@ -88,7 +92,7 @@ class ResourceService {
   }
 
   registerHook(pluginFilename) {
-    winston.debug('Loading resources hook from file "%s"', pluginFilename);
+    this.log('Loading resources hook from file "%s"', pluginFilename);
 
     const plugin = require(pluginFilename); // eslint-disable-line global-require
 

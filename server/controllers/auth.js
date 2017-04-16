@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import httpStatus from 'http-status';
 import APIError from '../helpers/APIError';
 
-import User from '../models/user.model';
+import Account from '../models/accounts';
 
 const config = require('../../config/env');
 
@@ -14,7 +14,7 @@ const config = require('../../config/env');
  * @returns {*}
  */
 function login(req, res, next) {
-  User.findOne({ username: req.body.username }).then((user) => {
+  Account.findOne({ username: req.body.username }).then((user) => {
     if (!user) {
       const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED);
       return next(err);

@@ -112,7 +112,7 @@ describe('## ResourceService', () => {
       service.middleware({
         method: 'get',
         query: { fields: '_id,mobileNumber' },
-        params: { resource: 'users' }
+        params: { resource: 'accounts' }
       }, res);
 
       expect(res.json.called).to.be.true;  // eslint-disable-line no-unused-expressions
