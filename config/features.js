@@ -6,6 +6,10 @@ const criteria = [
   {
     id: 'random',
     check: (user, percent) => Math.random() > percent
+  },
+  {
+    id: 'isAdminUser',
+    check: (user, username) => user.username === username
   }
 ];
 

@@ -1,3 +1,6 @@
-import User from './user.model';
+/**
+ * Include all models which should used in ResourceService
+ */
+import Account from './accounts';
 
-export { User }; // eslint-disable-line import/prefer-default-export
+export { Account }; // eslint-disable-line import/prefer-default-export

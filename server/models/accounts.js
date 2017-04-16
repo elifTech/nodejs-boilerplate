@@ -4,12 +4,14 @@ import httpStatus from 'http-status';
 import APIError from '../helpers/APIError';
 import { uniqueValidationByModel } from '../helpers/validators';
 
+const modelName = 'Account';
+
 /**
- * User Schema
+ * Account
  *
  * @swagger
  * definition:
- *   User:
+ *   Account:
  *     properties:
  *       username:
  *         type: string
@@ -19,29 +21,51 @@ import { uniqueValidationByModel } from '../helpers/validators';
  *         type: string
  *         format: date
  */
-const UserSchema = new mongoose.Schema({
+const Schema = new mongoose.Schema({
+  accountType: { type: String, default: 'system', enum: ['system', 'facebook', 'twitter', 'google', 'linkedin'] },
+
+  // login fields
   username: {
     type: String,
     required: [true, 'Username field required'],
     validate: [{
       isAsync: true,
-      validator: (value, cb) => uniqueValidationByModel(mongoose.model('User'), { username: value }, cb),
+      validator: (value, cb) => uniqueValidationByModel(mongoose.model(modelName), { username: value }, cb),
       message: '{VALUE} with this {PATH} already exists'
     }, {
-      validator: value => /[a-z]{1}.*/i.test(value),
+      validator: value => /^[a-z].*$/i.test(value),
       message: '{PATH} should start from letter [a-z]'
     }]
   },
+  password: {
+    type: String,
+    required: [true, 'Password field required']
+  },
+  salt: String,
+
+  // for external auth usage
+  extUser: String,
+  extToken: String,
+  extTokenSecret: String,
+
+  // activation
+  activated: { type: Boolean, required: true, default: false },
+  activationDate: Date,
   activationToken: String,
-  removed: Date,
+
+  // information
+  email: String,
   mobileNumber: {
     type: String,
     match: [/^[1-9][0-9]{9}$/, 'The value of path {PATH} ({VALUE}) is not a valid mobile number.']
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
+  loginDate: Date, // last user login
+  activityDate: Date, // last user activity
+
+  // required by ResourceService
+  removed: Date,
+  createDate: { type: Date, required: true, default: Date.now },
+  modifyDate: Date
 });
 
 /**
@@ -54,17 +78,17 @@ const UserSchema = new mongoose.Schema({
 /**
  * Methods
  */
-UserSchema.method({
+Schema.method({
 });
 
 /**
  * Statics
  */
-UserSchema.statics = {
+Schema.statics = {
   /**
    * Get user
    * @param {ObjectId} id - The objectId of user.
-   * @returns {Promise<User, APIError>}
+   * @returns {Promise<Account, APIError>}
    */
   get(id) {
     return this.findById(id)
@@ -79,10 +103,10 @@ UserSchema.statics = {
   },
 
   /**
-   * List users in descending order of 'createdAt' timestamp.
-   * @param {number} skip - Number of users to be skipped.
-   * @param {number} limit - Limit number of users to be returned.
-   * @returns {Promise<User[]>}
+   * List acounts in descending order of 'createdAt' timestamp.
+   * @param {number} skip - Number of accounts to be skipped.
+   * @param {number} limit - Limit number of accounts to be returned.
+   * @returns {Promise<Account[]>}
    */
   list({ skip = 0, limit = 50 } = {}) {
     return this.find()
@@ -93,7 +117,9 @@ UserSchema.statics = {
   }
 };
 
+Schema.index({ username: 1 }, { unique: true });
+
 /**
- * @typedef User
+ * @typedef Account
  */
-export default mongoose.model('User', UserSchema);
+export default mongoose.model(modelName, Schema);

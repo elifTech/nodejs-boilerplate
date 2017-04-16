@@ -1,10 +1,10 @@
 /**
  * @swagger
- * /users:
+ * /accounts:
  *   get:
  *     tags:
- *       - Users
- *     description: Get list of users
+ *       - Accounts
+ *     description: Get list of accounts
  *     produces:
  *       - application/json
  *     responses:
@@ -12,60 +12,70 @@
  *         schema:
  *           type: array
  *           items:
- *             $ref: '#/definitions/User'
+ *             $ref: '#/definitions/Account'
  *   post:
  *     tags:
- *       - Users
- *     description: Create new user
+ *       - Accounts
+ *     description: Create new account
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: username
+ *       - name: accountname
  *         description: Username
  *         in: formData
  *         required: true
  *         type: string
+ *       - name: password
+ *         description: Password
+ *         in: formData
+ *         required: true
+ *         type: string
+ *       - name: activated
+ *         description: Is account activated
+ *         in: formData
+ *         required: false
+ *         type: boolean
+ *       - name: email
+ *         description: Email
+ *         in: formData
+ *         required: false
+ *         type: string
  *       - name: mobileNumber
  *         description: Phone
  *         in: formData
- *         required: true
+ *         required: false
  *         type: string
  *     responses:
  *       201:
  *         description: Success
- * /users/{userId}:
+ * /accounts/{accountId}:
  *   get:
  *     tags:
- *       - Users
- *     description: Get user
+ *       - Accounts
+ *     description: Get account
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: userId
- *         description: User id (ObjectId)
+ *       - name: accountId
+ *         description: Account id (ObjectId)
  *         in: path
  *         required: true
  *         type: string
  *     responses:
  *       200:
  *         schema:
- *           $ref: '#/definitions/User'
+ *           $ref: '#/definitions/Account'
  *   put:
  *     tags:
- *       - Users
- *     description: Update user
+ *       - Accounts
+ *     description: Update account
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: userId
- *         description: User id (ObjectId)
+ *       - name: accountId
+ *         description: Account id (ObjectId)
  *         in: path
  *         required: true
- *         type: string
- *       - name: username
- *         description: Username
- *         in: formData
- *         required: false
  *         type: string
  *       - name: mobileNumber
  *         description: Phone
@@ -77,13 +87,13 @@
  *         description: Success
  *   delete:
  *     tags:
- *       - Users
- *     description: Delete user
+ *       - Accounts
+ *     description: Delete account
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: userId
- *         description: User id (ObjectId)
+ *       - name: accountId
+ *         description: Account id (ObjectId)
  *         in: path
  *         required: true
  *         type: string

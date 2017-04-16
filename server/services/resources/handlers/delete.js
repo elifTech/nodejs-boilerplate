@@ -19,7 +19,7 @@ function deleteHandler(service, model, fields, schemaFields, req, res, cb) {
         return cb(error);
       }
 
-      winston.debug(`Resource "${req.params.resource}" deleted.`, { resourceId: data._id.toString(), collectionName: req.params.resource });
+      winston.info(`Resource "${req.params.resource}" deleted.`, { resourceId: data._id.toString(), collectionName: req.params.resource });
 
       service.events.emit('events', eventName, { _id: req.params._id });
 

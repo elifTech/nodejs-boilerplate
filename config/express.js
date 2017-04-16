@@ -10,18 +10,25 @@ import httpStatus from 'http-status';
 import expressWinston from 'express-winston';
 import expressValidation from 'express-validation';
 import helmet from 'helmet';
+import expressJwt from 'express-jwt';
+import { Server } from 'http';
 import 'twig';
 import 'babel-polyfill';
 
+import authMiddleware from './middleware/auth';
 import features from './features';
 import winstonInstance from './winston';
-import routes from '../server/routes/index.route';
+import routes from '../server/routes';
 import config from './env';
 import APIError from '../server/helpers/APIError';
 import TasksService from '../server/services/tasks';
 import ResourceService from '../server/services/resources';
+import SocketService from '../server/services/socket';
 
 const app = express();
+const server = Server(app); // eslint-disable-line new-cap
+
+export { server };
 
 app.set('views', path.join(__dirname, '../server/views'));
 
@@ -31,7 +38,8 @@ if (config.env === 'development') {
 
 app.services = {
   tasks: new TasksService(),
-  resources: new ResourceService()
+  resources: new ResourceService(),
+  socket: new SocketService(server)
 };
 
 app.services.resources.events.on('events', (eventName, options) => {
@@ -66,9 +74,25 @@ if (config.env === 'development') {
 
 features.connect(app); // Feature flags
 
+app.use(expressJwt({
+  secret: config.jwtSecret,
+  credentialsRequired: false,
+  userProperty: 'auth',
+  getToken: (req) => {
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+      return req.headers.authorization.split(' ')[1];
+    } else if (req.query && req.query.token) {
+      return req.query.token;
+    }
+    return null;
+  }
+}));
+app.use(authMiddleware);
 app.use((req, res, next) => { // put it after authorization
-  const user = req.auth || {};
+  const user = req.user || {};
   req.fflip.setForUser(user);
+  res.summaryError = summaryError; // eslint-disable-line no-param-reassign
+  res.fieldsError = fieldsError; // eslint-disable-line no-param-reassign
   next();
 });
 
@@ -111,5 +135,16 @@ app.use((err, req, res, next) => // eslint-disable-line no-unused-vars
     stack: config.env === 'development' ? err.stack : {}
   })
 );
+
+function summaryError(message) {
+  this
+    .status(httpStatus.UNPROCESSABLE_ENTITY)
+    .json({ $summary: [{ msg: message }] });
+}
+function fieldsError(fieldsErrors) {
+  this
+    .status(httpStatus.UNPROCESSABLE_ENTITY)
+    .json(fieldsErrors);
+}
 
 export default app;

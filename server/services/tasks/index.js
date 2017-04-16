@@ -15,10 +15,14 @@ class TasksService {
     this.mqService = new MqService(`/queue/${this.id}`);
   }
 
+  log(message) { // eslint-disable-line class-methods-use-this
+    winston.info(`[TasksService] ${message}`);
+  }
+
   loadPlugins(cb) {
     async.auto({
       fileList: (next) => {
-        winston.debug('Loading tasks plugins started:', this.options.pluginsPath);
+        this.log('Loading tasks plugins started:', this.options.pluginsPath);
         dirWalk(this.options.pluginsPath, next);
       },
       plugins: ['fileList', (data, next) => {
@@ -33,7 +37,7 @@ class TasksService {
         if (pluginsCount === 0) {
           winston.warn('Tasks plugins loading procedure complete successfully, but plugins not found');
         } else {
-          winston.debug('Tasks plugins loaded successfully - %s', pluginsCount);
+          this.log('Tasks plugins loaded successfully - %s', pluginsCount);
         }
         next();
       }]
@@ -41,7 +45,7 @@ class TasksService {
   }
 
   registerPlugin(pluginFilename) {
-    winston.debug('Loading tasks plugins from file "%s"', pluginFilename);
+    this.log('Loading tasks plugins from file "%s"', pluginFilename);
 
     const plugin = require(pluginFilename); // eslint-disable-line global-require
 
@@ -59,7 +63,7 @@ class TasksService {
   }
 
   runTask(name, options = {}) {
-    winston.debug(`Task "${name}" pushed`, options);
+    this.log(`Task "${name}" pushed`, options);
 
     this.mqService.push({ name, options });
   }
@@ -68,7 +72,7 @@ class TasksService {
     const handlers = this.plugins[name] || [];
 
     if (!handlers.length) {
-      return winston.debug(`Event "${name}" processed successfully without executing tasks`);
+      return this.log(`Event "${name}" processed successfully without executing tasks`);
     }
     return async.each(handlers, (handler, next) => {
       handler({ name, options }, next);
@@ -77,7 +81,7 @@ class TasksService {
         return winston.error(err);
       }
 
-      return winston.debug(`Event "${name}" processed successfully. Executed tasks - ${handlers.length}`);
+      return this.log(`Event "${name}" processed successfully. Executed tasks - ${handlers.length}`);
     });
   }
 

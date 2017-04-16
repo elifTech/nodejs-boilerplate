@@ -53,7 +53,7 @@ function putHandler(service, model, fields, schemaFields, req, res, cb) {
     if (err) {
       return cb(err);
     }
-    winston.debug(`Resource "${req.params.resource}" changed.`, { resourceId: resource._id.toString(), collectionName: req.params.resource });
+    winston.info(`Resource "${req.params.resource}" changed.`, { resourceId: resource._id.toString(), collectionName: req.params.resource });
 
     service.events.emit('events', eventName, { _id: resource._id.toString() });
 

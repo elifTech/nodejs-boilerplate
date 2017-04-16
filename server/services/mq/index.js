@@ -31,6 +31,10 @@ class MqService {
     this.channelPool = stompit.ChannelPool(this.connectionManager); // eslint-disable-line new-cap
   }
 
+  log(message) { // eslint-disable-line class-methods-use-this
+    winston.info(`[MqService] ${message}`);
+  }
+
   subscribe(cb) {
     const subscribeHeaders = {
       destination: this.destination,
