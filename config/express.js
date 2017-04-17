@@ -37,7 +37,7 @@ if (config.env === 'development') {
 }
 
 app.services = {
-  tasks: new TasksService(),
+  tasks: new TasksService(app),
   resources: new ResourceService(),
   socket: new SocketService(server)
 };

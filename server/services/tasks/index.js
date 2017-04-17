@@ -6,8 +6,9 @@ import MqService from '../mq';
 
 export default
 class TasksService {
-  constructor(options = {}) {
+  constructor(app, options = {}) {
     this.id = options.id || 'tasks';
+    this.app = app;
     this.plugins = {};
     this.options = options || {};
     this.options.pluginsPath = this.options.pluginsPath || path.join(__dirname, '..', '..', 'plugins', 'tasks');
@@ -75,7 +76,7 @@ class TasksService {
       return this.log(`Event "${name}" processed successfully without executing tasks`);
     }
     return async.each(handlers, (handler, next) => {
-      handler({ name, options }, next);
+      handler(this, { name, options }, next);
     }, (err) => {
       if (err) {
         return winston.error(err);

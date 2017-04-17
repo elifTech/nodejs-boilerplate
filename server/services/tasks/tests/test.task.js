@@ -2,6 +2,6 @@ export default {
   'db.test.account': testAccount
 };
 
-function testAccount({ name, options }, cb) {
+function testAccount(service, { name, options }, cb) {
   cb();
 }
