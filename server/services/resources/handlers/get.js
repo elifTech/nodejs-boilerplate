@@ -61,17 +61,17 @@ function getHandler(service, model, fields, schemaFields, req, res, cb) {
 
 function getDataOptions(req, next) {
   const opts = {};
-  const resourceOptions = req.resource.options || {};
+  const { maxPerPage } = req.resource.options || {};
   const { page, perPage, sort } = req.query;
 
-  if (resourceOptions.maxPerPage) {
-    if (!(perPage && perPage <= resourceOptions.maxPerPage)) {
-      return next(new req.app.errors.OperationError('Missing "perPage" query param'));
+  if (maxPerPage) {
+    if (!(perPage && perPage <= maxPerPage)) {
+      return next('Missing "perPage" query param');
     }
     opts.limit = perPage;
 
     if (!page) {
-      return next(new req.app.errors.OperationError('Missing "page" query param'));
+      return next('Missing "page" query param');
     }
     opts.skip = page ? (page - 1) * opts.limit : 0;
   } else if (perPage) {
@@ -100,7 +100,7 @@ function getDataOptions(req, next) {
 }
 
 function getFilter(req, schemaFields, next) {
-  const resourceOptions = req.resource.options || {};
+  const { searchFields } = req.resource.options || {};
   const query = req.query;
 
   const filter = {
@@ -121,9 +121,9 @@ function getFilter(req, schemaFields, next) {
   }
   filter.$and.push({ removed: { $exists: false } });
   const search = query.search;
-  if (search && resourceOptions.searchFields) {
+  if (search && searchFields) {
     filter.$and.push({
-      $or: _.map(resourceOptions.searchFields, (field) => {
+      $or: _.map(searchFields, (field) => {
         const o = {};
         o[field] = { $regex: search, $options: 'i' };
         return o;
