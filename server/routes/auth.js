@@ -1,11 +1,11 @@
-import express from 'express';
+import { Router } from 'express';
 import validate from 'express-validation';
 import expressJwt from 'express-jwt';
 import paramValidation from '../../config/param-validation';
 import authCtrl from '../controllers/auth';
 import config from '../../config/env';
 
-const router = express.Router(); // eslint-disable-line new-cap
+const router = Router(); // eslint-disable-line new-cap
 
 /**
  * @swagger

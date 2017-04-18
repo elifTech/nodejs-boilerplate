@@ -96,10 +96,10 @@ app.use((req, res, next) => { // put it after authorization
   next();
 });
 
-app.use('/api', app.services.resources.getRouter());
-
 // mount all routes on /api path
 app.use('/', routes);
+
+app.use('/api', app.services.resources.getRouter());
 
 // if error is not an instanceOf APIError, convert it.
 app.use((err, req, res, next) => {

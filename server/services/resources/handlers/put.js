@@ -10,17 +10,18 @@ function putHandler(service, model, fields, schemaFields, req, res, cb) {
 
   const eventName = `db.${req.params.resource}.update`;
 
+  req.body._id = req.params._id; // eslint-disable-line no-param-reassign
+
   const zipFields = _.mapValues(_.zipObject(fields), _.constant(1));
-  const bodyFields = getJsonFields(req.body);
-  const updateFields = _.without(_.intersection(fields, bodyFields), '__v');
-
-  let body = deepPick(req.body, updateFields);
-  body._id = req.params._id;
-
   async.auto({
     resource: next => model.findById(req.params._id, zipFields, next),
-    hooks: next => service.runHook(eventName, req, body, next),
+    hooks: next => service.runHook(eventName, req, next),
     prepareModel: ['hooks', 'resource', ({ resource }, next) => {
+      const bodyFields = getJsonFields(req.body);
+      const updateFields = _.without(_.intersection(schemaFields, bodyFields), '__v');
+
+      let body = deepPick(req.body, updateFields);
+
       body = _.pickBy(body, item => item !== null);
       body = _.extend(body, { modifyDate: Date.now() });
 

@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import path from 'path';
-import mongoose from 'mongoose';
 import ResourceService from './index';
 
 describe('## ResourceService', () => {
@@ -29,15 +28,6 @@ describe('## ResourceService', () => {
       expect(() => service.middleware({ params: { resource: 'resourceWithUnknownModel' } })).to.throw; // eslint-disable-line no-unused-expressions
       done();
     });
-  });
-
-  it('should return schema fields list', () => {
-    const schema = mongoose.Schema({ // eslint-disable-line new-cap
-      x: String,
-      y: { a: String, z: String }
-    });
-    const fields = ResourceService._getMongooseFields(schema);
-    expect(fields).to.deep.equal(['x', 'y.a', 'y.z', '_id']);
   });
 
   describe('### ACL', () => {

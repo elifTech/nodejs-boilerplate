@@ -9,15 +9,15 @@ export default
 function postHandler(service, model, fields, schemaFields, req, res, cb) {
   res.set('x-service', 'resources');
 
-  const bodyFields = getJsonFields(req.body);
-  const updateFields = _.without(_.intersection(fields, bodyFields), '__v');
-  let body = deepPick(req.body, updateFields);
-
   const eventName = `db.${req.params.resource}.insert`;
 
   async.auto({
-    hooks: next => service.runHook(eventName, req, body, next),
+    hooks: next => service.runHook(eventName, req, next),
     prepareModel: ['hooks', ({ hooks }, next) => {
+      const bodyFields = getJsonFields(req.body);
+      const updateFields = _.without(_.intersection(schemaFields, bodyFields), '__v');
+
+      let body = deepPick(req.body, updateFields);
       body._id = mongoose.Types.ObjectId(); // eslint-disable-line new-cap
       body = _.pickBy(body, item => item !== null);
 

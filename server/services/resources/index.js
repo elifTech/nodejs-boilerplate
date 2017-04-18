@@ -8,6 +8,7 @@ import mongoose from 'mongoose';
 import { EventEmitter } from 'events';
 import httpStatus from 'http-status';
 
+import { getMongooseFields } from './helpers';
 import getHandler from './handlers/get';
 import postHandler from './handlers/post';
 import deleteHandler from './handlers/delete';
@@ -116,39 +117,6 @@ class ResourceService {
     return this.resources[name];
   }
 
-  /**
-   * Get plain fields from mongoose schema
-   *
-   * @param schema Mongoose schema
-   * @returns {string[]} Returns plain array of schema fields
-   * @example
-   * let schema = mongoose.Schema({
-   *   x:String,
-   *   y:{ a:String, z:String }
-   * });
-   * _getMongooseFields(schema);
-   * // returns ['x', 'y.a', 'y.z']
-   */
-  static _getMongooseFields(mongooseSchema) {
-    const props = [];
-    schemaWalk(mongooseSchema, props, '', 0);
-    return props;
-
-    function schemaWalk(schema, array, prefix, level) {
-      if (!schema) {
-        return;
-      }
-      schema.eachPath((pathName, pathType) => {
-        const thisName = (prefix ? `${prefix}.` : '') + pathName;
-        if (_.isArray(pathType.options.type)) {
-          schemaWalk(pathType.schema, array, thisName, level + 1);
-        } else if (level === 0 || !pathType.options.auto) {
-          array.push(thisName);
-        }
-      });
-    }
-  }
-
   getRouter() {
     const router = express.Router(); // eslint-disable-line new-cap
     const resourceRoute = this.middleware.bind(this);
@@ -184,7 +152,7 @@ class ResourceService {
     const bodyFields = _.keys(req.body);
     const reqFieldsArr = _.union(paramFields, bodyFields);
 
-    const schemaFields = ResourceService._getMongooseFields(model.schema);
+    const schemaFields = getMongooseFields(model.schema);
     const params = _.keys(_.omit(query, allowQueryParams));
     if (req.params._id) {
       params.push('_id');

@@ -21,18 +21,16 @@ describe('## ResourceService postHandler', () => {
     };
 
     postHandler(service, {}, ['test'], ['test'], req, res);
-
     expect(service.runHook.called).to.be.true; // eslint-disable-line no-unused-expressions
     expect(service.runHook.getCall(0).args[0]).to.deep.equal('db.accounts.insert');
     expect(service.runHook.getCall(0).args[1]).to.equal(req);
-    expect(service.runHook.getCall(0).args[2]).to.deep.equal({ test: 1 });
     expect(res.set.called).to.be.true; // eslint-disable-line no-unused-expressions
     expect(res.set.getCall(0).args).to.deep.equal(['x-service', 'resources']);
   });
 
   it('should validate model', (done) => {
     const service = {
-      runHook: (p1, p2, p3, p4) => p4()
+      runHook: (p1, p2, p3) => p3()
     };
     const req = {
       params: { resource: 'accounts' },
@@ -56,7 +54,7 @@ describe('## ResourceService postHandler', () => {
 
   it('should save model', (done) => {
     const service = {
-      runHook: (p1, p2, p3, p4) => p4(),
+      runHook: (p1, p2, p3) => p3(),
       events: {
         emit: sinon.stub()
       }
