@@ -106,6 +106,23 @@ gulp
 In production you need to make sure your server is always up so you should ideally use any of the process manager recommended [here](http://expressjs.com/en/advanced/pm.html).
 We recommend [pm2](http://pm2.keymetrics.io/) as it has several useful features like it can be configured to auto-start your services if system is rebooted.
 
+## Deployment to AWS
+
+1. Go to AWS Console and
+  - My Security Credentials -> Users -> Security credentials
+  - Create access key -> download to your machine Access Key and Secret Access Key csv file
+  - Copy Access Key and Secret Access Key from file to projects /config/deployment/deploy.sh : YOUR_KEY and YOUR_SECRET
+  - (Optional) Change also AWS_REGION and AWS_BUCKET to the preferable
+  - Setup your user home directory
+  - setup project name and your aws account id (you can find it in the right top corner, near your user name). Paste it withour dashes, ONLY numbers.
+  
+2. (If the first deploy to AWS) Go to [EC2 Container Service](https://eu-central-1.console.aws.amazon.com/ecs/home?region=eu-central-1)
+  - click start button
+  - write your repository name (must be the same as in deploy.sh project_name variable)
+  - $ bash deploy.sh
+  - when finished, click next in AWS Console Wizard and proceed the steps (configure next steps as you wish, but its recomended to use default one's)
+  
+
 ## Documentation
 
 * [Logging](docs/logging.md)
