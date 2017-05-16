@@ -9,8 +9,8 @@ sudo python get-pip.py
 sudo pip install awscli
 
 #AWS AMI User creds
-AMI_AWS_KEY="AKIAJ2GVCB2MQYXZRODA"
-AMI_AWS_SECRET="iErikZrHj4+Mj61U12nlU1rB+A/BCTplcSxRuDJF"
+AMI_AWS_KEY="YOUR_KEY"
+AMI_AWS_SECRET="YOUR_SECRET"
 AWS_REGION="eu-central-1"
 AWS_BUCKET="node-boilerplate"
 
@@ -18,10 +18,10 @@ AWS_DEPLOY_TASK_DEFINITION="console-node-boilerplate-static"
 AWS_DEPLOY_SERVICE_NAME="node-boilerplate-app"
 AWS_DEPLOY_CLUSTER="node-boilerplate-cluster"
 
-PROJECT_NAME="node-boilerplate"
-ACCOUNT_ID="091953829232"
-AWS_BUCKET="node-boilerplate"
-YOUR_USER="home/yurko"
+PROJECT_NAME="PROJECT_NAME"
+ACCOUNT_ID="ACCOUNT_ID"
+AWS_BUCKET="AWS_BUCKET"
+YOUR_USER="YOUR_USER"
 
 DOCKERFILE_DIR=`pwd`"/../.."
 REGISTER_TASK_FILE=`pwd`/task-definition.json
