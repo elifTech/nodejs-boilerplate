@@ -120,8 +120,10 @@ We recommend [pm2](http://pm2.keymetrics.io/) as it has several useful features 
   - click start button
   - write your repository name (must be the same as in deploy.sh project_name variable)
   - $ bash deploy.sh
-  - when finished, click next in AWS Console Wizard and proceed the steps (configure next steps as you wish, but its recomended to use default one's)
-  
+  - when finished, click next in AWS Console Wizard and proceed the steps (configure next steps as you wish, but its recomended to use default one's). 
+  - NOTE: you need to setup your cluster name, service name and task definition name the same as in deploy.sh file, you can find them as (AWS_DEPLOY_TASK_DEFINITION, AWS_DEPLOY_SERVICE_NAME, AWS_DEPLOY_CLUSTER)
+  - in the Service configuration option step, please configure "Minimum healthy percent" to 0 and "Maximum percent" to 100. We need to do that, to update image after successfully prebuild in Travis CI 
+3. Thats all, now you can push your commits, and the script will do all magic for you ;)
 
 ## Documentation
 

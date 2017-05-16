@@ -1,0 +1,29 @@
+{
+  "networkMode": "bridge",
+  "containerDefinitions": [
+    {
+      "memory": 300,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 80,
+          "protocol": "tcp"
+        },
+        {
+          "hostPort": 1337,
+          "containerPort": 1337,
+          "protocol": "tcp"
+        },
+        {
+          "hostPort": 4040,
+          "containerPort": 4040,
+          "protocol": "tcp"
+        }
+      ],
+      "name": "PROJECT_NAME",
+      "image": "ACCOUNT_ID.dkr.ecr.AWS_REGION.amazonaws.com/PROJECT_NAME:latest",
+      "cpu": 10
+    }
+  ],
+  "family": "AWS_DEPLOY_TASK_DEFINITION"
+}
