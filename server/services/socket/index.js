@@ -1,3 +1,4 @@
+import async from 'async';
 import _ from 'lodash';
 import jwt from 'jsonwebtoken';
 import socketIO from 'socket.io';
@@ -13,9 +14,25 @@ class SocketService {
     this.options = options || {};
     this.sockets = {};
 
-    this.mqService = new MqService('/queue/sockets');
+    this.mqService = new MqService('sockets');
 
     this.io = socketIO(httpServer, {});
+  }
+
+  init(cb) {
+    async.auto({
+      mq: next => this.mqService.connect(next),
+      io: (next) => {
+        this.log('Initializing socket service...');
+
+        this.io.use(this.socketMiddleware.bind(this));
+        this.io.on('connection', this.onNewConnection.bind(this));
+
+        this.log('Socket service initialized successfully');
+        this.mqService.subscribe(this.onIncomingMessage.bind(this));
+        next();
+      }
+    }, cb);
   }
 
   log(message) { // eslint-disable-line class-methods-use-this
@@ -133,16 +150,5 @@ class SocketService {
         }
       });
     }
-  }
-
-  init(next) {
-    this.log('Initializing socket service...');
-
-    this.io.use(this.socketMiddleware.bind(this));
-    this.io.on('connection', this.onNewConnection.bind(this));
-
-    this.log('Socket service initialized successfully');
-    this.mqService.subscribe(this.onIncomingMessage.bind(this));
-    next();
   }
 }

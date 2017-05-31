@@ -39,6 +39,7 @@
     "boilerplate"
   ],
   "dependencies": {
+    "amqp": "^0.2.6",
     "array-unique": "^0.3.2",
     "async": "^2.3.0",
     "babel-polyfill": "^6.23.0",
