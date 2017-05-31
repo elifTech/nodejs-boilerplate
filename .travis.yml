@@ -7,12 +7,6 @@ services:
   - rabbitmq
   - mongodb
 
-before_script:
-  - sudo rabbitmq-plugins enable rabbitmq_stomp
-  - sudo service rabbitmq-server restart
-  - sudo rabbitmqctl status
-  - sudo rabbitmq-plugins list
-
 cache:
   directories:
   - node_modules

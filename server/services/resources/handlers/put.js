@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import async from 'async';
+import deepmerge from 'deepmerge';
 import winston from 'winston';
 import httpStatus from 'http-status';
 import { getJsonFields, deepPick, setAndUnsetQuery } from '../helpers';
@@ -18,18 +19,26 @@ function putHandler(service, model, fields, schemaFields, req, res, cb) {
     hooks: next => service.runHook(eventName, req, next),
     prepareModel: ['hooks', 'resource', ({ resource }, next) => {
       const bodyFields = getJsonFields(req.body);
+      const wildcardFields = _.map(_.filter(schemaFields, item => item.indexOf('.*') !== -1), item => item.replace('.*', ''));
+      const mixedFields = _.filter(bodyFields, item => !!_.find(wildcardFields, field => item.indexOf(`${field}.`) === 0));
       const updateFields = _.without(_.intersection(schemaFields, bodyFields), '__v');
 
       let body = deepPick(req.body, updateFields);
+      const mixedBody = deepPick(req.body, wildcardFields);
+      _.each(mixedFields, field => resource.markModified(field));
 
       body = _.pickBy(body, item => item !== null);
-      body = _.extend(body, { modifyDate: Date.now() });
+      body = _.assign(body, { modifyDate: Date.now() });
+      body = deepmerge(body, mixedBody);
 
       setAndUnsetQuery(resource, body);
       next(null, resource);
     }],
     validate: ['prepareModel', ({ prepareModel }, next) => {
-      prepareModel.validate((err) => {
+      if (!prepareModel) {
+        return next({ msg: 'Not found' });
+      }
+      return prepareModel.validate((err) => {
         if (!err) {
           return next();
         }

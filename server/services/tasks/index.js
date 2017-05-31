@@ -13,7 +13,14 @@ class TasksService {
     this.options = options || {};
     this.options.pluginsPath = this.options.pluginsPath || path.join(__dirname, '..', '..', 'plugins', 'tasks');
 
-    this.mqService = new MqService(`/queue/${this.id}`);
+    this.mqService = new MqService(`${this.id}`);
+  }
+
+  init(cb) {
+    async.auto({
+      mq: next => this.mqService.connect(next),
+      plugins: next => this.loadPlugins(next)
+    }, cb);
   }
 
   log(message) { // eslint-disable-line class-methods-use-this
@@ -38,7 +45,7 @@ class TasksService {
         if (pluginsCount === 0) {
           winston.warn('Tasks plugins loading procedure complete successfully, but plugins not found');
         } else {
-          this.log('Tasks plugins loaded successfully - %s', pluginsCount);
+          this.log(`Tasks plugins loaded successfully - ${pluginsCount}`);
         }
         next();
       }]
@@ -46,7 +53,7 @@ class TasksService {
   }
 
   registerPlugin(pluginFilename) {
-    this.log('Loading tasks plugins from file "%s"', pluginFilename);
+    this.log(`Loading tasks plugins from file "${pluginFilename}"`);
 
     const plugin = require(pluginFilename); // eslint-disable-line global-require
 

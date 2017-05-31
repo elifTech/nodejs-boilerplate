@@ -1,10 +1,9 @@
 # MQ broker
 
-Used https://github.com/gdaws/node-stomp
+Used https://github.com/gdaws/node-stomp and https://github.com/postwait/node-amqp
 
 Supported:
-  * ActiveMQ
-  * RabbitMQ
+  * AMQP and STOMP protocols
 
 ## Usage
 
@@ -18,6 +17,13 @@ mq: {
     login: 'root',
     password: '123456'
   }
+}
+```
+
+or
+```javascript
+mq: {
+  amqp: 'amqp://rsdrarqg:VjRIlEnXZkzNoFfjtx3U6mDTmFdKDkqG@crocodile.rmq.cloudamqp.com/rsdrarqg'
 }
 ```
 

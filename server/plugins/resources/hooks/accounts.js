@@ -7,19 +7,19 @@ export default {
   'db.accounts.insert': beforeAccountCreate
 };
 
-function beforeAccountCreate(service, req, body, cb) {
+function beforeAccountCreate(service, req, cb) {
   async.auto({
     activationToken: (next) => {
       crypto.randomBytes(24, (err, buffer) => {
-        body.activationToken = buffer.toString('hex');
+        req.body.activationToken = buffer.toString('hex');
         next();
       });
     },
     salt: (next) => {
-      pwd.hash(body.password, (err, salt, hash) => {
+      pwd.hash(req.body.password, (err, salt, hash) => {
         if (err) { return cb(err); }
-        body.password = hash;
-        body.salt = salt;
+        req.body.password = hash;
+        req.body.salt = salt;
         return next();
       });
     }
