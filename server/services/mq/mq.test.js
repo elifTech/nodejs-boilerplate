@@ -27,7 +27,7 @@ describe('## MqService', () => {
         message: 'test'
       });
     });
-  }).timeout(15000);
+  }).timeout(60000);
 
   it('should be subscribed on channel and receive multiple messages', (done) => {
     const service = new MqService('test2');
@@ -55,5 +55,5 @@ describe('## MqService', () => {
         message: '+1'
       });
     });
-  }).timeout(15000);
+  }).timeout(60000);
 });
