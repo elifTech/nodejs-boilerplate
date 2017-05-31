@@ -22,7 +22,7 @@ class SocketService {
   init(cb) {
     async.auto({
       mq: next => this.mqService.connect(next),
-      io: (next) => {
+      io: ['mq', (next) => {
         this.log('Initializing socket service...');
 
         this.io.use(this.socketMiddleware.bind(this));
@@ -31,7 +31,7 @@ class SocketService {
         this.log('Socket service initialized successfully');
         this.mqService.subscribe(this.onIncomingMessage.bind(this));
         next();
-      }
+      }]
     }, cb);
   }
 

@@ -15,13 +15,21 @@ function postHandler(service, model, fields, schemaFields, req, res, cb) {
     hooks: next => service.runHook(eventName, req, next),
     prepareModel: ['hooks', ({ hooks }, next) => {
       const bodyFields = getJsonFields(req.body);
-      const updateFields = _.without(_.intersection(schemaFields, bodyFields), '__v');
+      const wildcardFields = _.map(_.filter(schemaFields, item => item.indexOf('.*') !== -1), item => item.replace('.*', ''));
+      const mixedFields = _.filter(bodyFields, item => !!_.find(wildcardFields, field => item.indexOf(`${field}.`) === 0));
+      const updateFields = _.without(_.intersection(schemaFields, bodyFields), '__v').concat(mixedFields);
 
       let body = deepPick(req.body, updateFields);
+      const mixedBody = _.pick(req.body, wildcardFields);
+
       body._id = mongoose.Types.ObjectId(); // eslint-disable-line new-cap
+      body = _.assign(body, mixedBody);
       body = _.pickBy(body, item => item !== null);
 
-      next(null, new model(body)); // eslint-disable-line new-cap
+      const resource = new model(body); // eslint-disable-line new-cap
+      _.each(mixedFields, field => resource.markModified(field));
+
+      next(null, resource); // eslint-disable-line new-cap
     }],
     validate: ['prepareModel', ({ prepareModel }, next) => {
       prepareModel.validate((err) => {

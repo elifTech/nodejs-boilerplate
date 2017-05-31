@@ -6,7 +6,7 @@ export default {
   port: 4040,
 
   mq: {
-    amqp: 'amqp://guest:guest@localhost/default'
+    amqp: 'amqp://guest:guest@localhost/%2F'
   },
 
   mail: {

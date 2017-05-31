@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import mongoose from 'mongoose';
 
+const MAX_RECURSIVE_SCHEMA_DEPTH = 10;
+
 /**
  * Returns plain fields from json object
  *
@@ -55,14 +57,16 @@ function getMongooseFields(mongooseSchema) {
   return props;
 
   function schemaWalk(schema, array, prefix, level) {
-    if (!schema) {
+    if (!schema || level > MAX_RECURSIVE_SCHEMA_DEPTH) { // check level for break on recursive schemas
       return;
     }
     schema.eachPath((pathName, pathType) => {
       const thisName = (prefix ? `${prefix}.` : '') + pathName;
 
-      if (_.isArray(pathType.options.type) || pathType.options.type instanceof mongoose.Schema) {
+      if (pathType.schema) {
         schemaWalk(pathType.schema, array, thisName, level + 1);
+      } else if (pathType instanceof mongoose.Schema.Types.Mixed) {
+        array.push(`${thisName}.*`);
       } else if (level === 0 || !pathType.options.auto) {
         array.push(thisName);
       }
@@ -85,11 +89,18 @@ function deepPick(source, fields) {
       const val = obj[key];
       const setPath = setArr.join('.');
       if (_.isArray(val)) {
-        res[setPath] = []; // eslint-disable-line no-param-reassign
         _.each(val, (item) => {
-          const x = {};
-          res[setPath].push(x);
-          _deepPick(x, keyArr, item, [], fieldsArr);
+          if (_.isObject(item)) {
+            const x = {};
+            _deepPick(x, keyArr, item, [], fieldsArr);
+            if (Object.keys(x).length > 0) {
+              res[setPath] = res[setPath] || []; // eslint-disable-line no-param-reassign
+              res[setPath].push(x);
+            }
+          } else {
+            res[setPath] = res[setPath] || []; // eslint-disable-line no-param-reassign
+            res[setPath].push(item);
+          }
         });
       } else if (_.includes(fieldsArr, path)) {
         res[setPath] = val; // eslint-disable-line no-param-reassign

@@ -20,7 +20,7 @@
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: accountname
+ *       - name: username
  *         description: Username
  *         in: formData
  *         required: true

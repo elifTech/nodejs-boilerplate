@@ -106,11 +106,11 @@ class ResourceService {
     });
   }
 
-  runHook(hookName, req, body, cb) {
+  runHook(hookName, req, cb) {
     if (!this.hooks[hookName]) {
       return cb();
     }
-    return async.eachLimit(this.hooks[hookName], 1, (hook, next) => hook(this, req, body, next), cb);
+    return async.eachLimit(this.hooks[hookName], 1, (hook, next) => hook(this, req, next), cb);
   }
 
   getResource(name) {

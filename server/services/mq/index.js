@@ -85,6 +85,9 @@ class MqService {
         cb(msg.body); // print new messages to the console
       });
     }
+    if (!this.channelPool) {
+      return null;
+    }
 
     // stomp
     return this.channelPool.channel((err, channel) => {
