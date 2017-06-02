@@ -106,22 +106,27 @@ gulp
 In production you need to make sure your server is always up so you should ideally use any of the process manager recommended [here](http://expressjs.com/en/advanced/pm.html).
 We recommend [pm2](http://pm2.keymetrics.io/) as it has several useful features like it can be configured to auto-start your services if system is rebooted.
 
-## Deployment to AWS
-
+## Deploy on AWS
 1. Go to AWS Console and
   - My Security Credentials -> Users -> Security credentials
   - Create access key -> download to your machine Access Key and Secret Access Key csv file
   - Copy Access Key and Secret Access Key from file to projects /config/deployment/deploy.sh : YOUR_KEY and YOUR_SECRET
   - (Optional) Change also AWS_REGION and AWS_BUCKET to the preferable
-  - Setup your user home directory
   - setup project name and your aws account id (you can find it in the right top corner, near your user name). Paste it withour dashes, ONLY numbers.
   
 2. (If the first deploy to AWS) Go to [EC2 Container Service](https://eu-central-1.console.aws.amazon.com/ecs/home?region=eu-central-1)
   - click start button
-  - write your repository name (must be the same as in deploy.sh project_name variable)
+  - write your repository name (must be the same as in deploy.sh and init.sh project_name variable)
   - $ bash deploy.sh
-  - when finished, click next in AWS Console Wizard and proceed the steps (configure next steps as you wish, but its recomended to use default one's)
-  
+  - when finished, click next in AWS Console Wizard and proceed the steps (configure next steps as you wish, but its recomended to use default one's). 
+  - NOTE: you need to setup your cluster name, service name and task definition name the same as in deploy.sh file, you can find them as (AWS_DEPLOY_TASK_DEFINITION, AWS_DEPLOY_SERVICE_NAME, AWS_DEPLOY_CLUSTER)
+    - task definition format: "console-[your project name]-static"
+    - service name format: "[your project name]-app"
+    - cluster name format: "[your project name]-cluster"
+  - in the step, when you will need to configure public open ports, please add them in the format: Inner Container Port : Outer Port (Inbound traffic)
+  - if, for some reasons you didn't add your public ports, you can do it manually from the EC2 Management Console. Just choose your instance, click to description Tab below and choose your Security group (You can check ports clicking "view inbound rules" btn).
+  - in the Service configuration option step, please configure "Minimum healthy percent" to 0 and "Maximum percent" to 100. We need to do that, to update image after successfully prebuild in Travis CI 
+3. Thats all, now you can push your commits, and the script will do all magic for you ;). Just dont forget to add it to your travis file.
 
 ## Documentation
 

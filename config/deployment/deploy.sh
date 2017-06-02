@@ -1,40 +1,24 @@
 #!/usr/bin/env bash
 
-sudo apt-get install -y python3 wget
-
-wget https://bootstrap.pypa.io/get-pip.py
-
-sudo python get-pip.py
-
-sudo pip install awscli
+PROJECT_NAME="node-boilerplate"
 
 #AWS AMI User creds
-AMI_AWS_KEY="YOUR_KEY"
-AMI_AWS_SECRET="YOUR_SECRET"
 AWS_REGION="eu-central-1"
-AWS_BUCKET="node-boilerplate"
-YOUR_USER="home/yurko"
-DOCKERFILE_DIR=`pwd`"/../.."
-PROJECT_NAME="node-boilerplate"
-ACCOUNT_ID="YOUR_ACC_ID"
 
-AWS_CONF=/$YOUR_USER/.aws/config
-#mkdir /$YOUR_USER/.aws
-
-echo "[default]
-aws_access_key_id=$AMI_AWS_KEY
-aws_secret_access_key=$AMI_AWS_SECRET
-region=$AWS_REGION
-output=json" > $AWS_CONF
+AWS_DEPLOY_TASK_DEFINITION="console-$PROJECT_NAME-static"
+AWS_DEPLOY_SERVICE_NAME="$PROJECT_NAME-app"
+AWS_DEPLOY_CLUSTER="$PROJECT_NAME-cluster"
 
 DOCKER_LOGIN=`aws ecr get-login --region $AWS_REGION`
 
 sudo $DOCKER_LOGIN
 
-#sudo aws ecr create-repository --repository-name $PROJECT_NAME
+NUMBER_OF_TASKS=`sudo aws ecs list-task-definitions --family-prefix $AWS_DEPLOY_TASK_DEFINITION | grep -o $AWS_DEPLOY_TASK_DEFINITION | wc -l`
 
-sudo docker build -t $PROJECT_NAME ../../.
+# register new task definition, check if we updating the service
+if [ $NUMBER_OF_TASKS > 0 ]; then
+  sudo aws ecs register-task-definition --cli-input-json file://$REGISTER_TASK_MOD_FILE
 
-sudo docker tag $PROJECT_NAME:latest $ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/$PROJECT_NAME:latest
-
-sudo docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$PROJECT_NAME:latest
+  REVISION=$((NUMBER_OF_TASKS+1))
+  sudo aws ecs update-service  --cluster $AWS_DEPLOY_CLUSTER --service $AWS_DEPLOY_SERVICE_NAME --task-definition $AWS_DEPLOY_TASK_DEFINITION:$REVISION
+fi

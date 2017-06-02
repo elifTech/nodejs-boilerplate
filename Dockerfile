@@ -48,7 +48,6 @@ EXPOSE 27017
 
 RUN npm i console-io -g
 
-#
 # Remove the packages that are no longer required after the package has been installed
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove --purge -q -y
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean -y -q
