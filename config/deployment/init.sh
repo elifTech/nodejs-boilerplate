@@ -34,14 +34,6 @@ DOCKERFILE_DIR=`pwd`
 REGISTER_TASK_FILE=`pwd`/config/deployment/task-definition.json
 REGISTER_TASK_MOD_FILE=`pwd`/config/deployment/task-definition-mod.json
 
-# mongo
-REGISTER_TASK_FILE_MONGO=`pwd`/config/deployment/mongo/task-definition.json
-REGISTER_TASK_MOD_FILE_MONGO=`pwd`/config/deployment/mongo/task-definition-mod.json
-
-IMAGE_DEST=$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$PROJECT_NAME:latest
-CLUSTER_COMPOSE=`pwd`/config/deployment/compose.yml
-CLUSTER_COMPOSE_MOD=`pwd`/config/deployment/compose-mod.yml
-
 AWS_DIR="$YOUR_USER/.aws"
 AWS_CONF=$YOUR_USER/.aws/config
 if [ ! -d "$AWS_DIR" ]; then
@@ -58,12 +50,3 @@ sed -e "s/PROJECT_NAME/$PROJECT_NAME/
 s/ACCOUNT_ID/$ACCOUNT_ID/
 s/AWS_REGION/$AWS_REGION/
 s/AWS_DEPLOY_TASK_DEFINITION/$AWS_DEPLOY_TASK_DEFINITION/" $REGISTER_TASK_FILE > $REGISTER_TASK_MOD_FILE
-
-sed -e "s/PROJECT_NAME/$PROJECT_NAME/
-s/ACCOUNT_ID/$ACCOUNT_ID/
-s/AWS_REGION/$AWS_REGION/
-s/AWS_DEPLOY_TASK_DEFINITION/$AWS_DEPLOY_TASK_DEFINITION/" $REGISTER_TASK_FILE_MONGO > $REGISTER_TASK_MOD_FILE_MONGO
-
-#echo $IMAGE_DEST
-#
-#sed "s/IMAGE_DEST/$IMAGE_DEST/" $CLUSTER_COMPOSE > $CLUSTER_COMPOSE_MOD

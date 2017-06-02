@@ -23,6 +23,11 @@ DOCKER_LOGIN=`aws ecr get-login --region $AWS_REGION`
 
 sudo $DOCKER_LOGIN
 
+# create cluster
+sudo ecs-cli up --keypair $KEYPAIR_NAME --capability-iam --size 2 --instance-type t2.micro --force
+#
+sudo ecs-cli compose --file `pwd`/config/deployment/compose.yml up
+
 ## main APP
 sudo aws ecr create-repository --repository-name $PROJECT_NAME
 
@@ -32,15 +37,9 @@ sudo docker tag $PROJECT_NAME:latest $ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.
 
 sudo docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$PROJECT_NAME:latest
 
-# create cluster
-sudo ecs-cli up --keypair $KEYPAIR_NAME --capability-iam --size 1 --instance-type t2.micro --force
+sudo aws ecs register-task-definition --cli-input-json file://$REGISTER_TASK_MOD_FILE
 
-sudo ecs-cli compose --file `pwd`/config/deployment/compose.yml up
-
-
-#sudo aws ecs register-task-definition --cli-input-json file://$REGISTER_TASK_MOD_FILE
-
-#sudo aws ecs run-task --cluster $AWS_DEPLOY_CLUSTER --task-definition $AWS_DEPLOY_TASK_DEFINITION
+sudo aws ecs run-task --cluster $AWS_DEPLOY_CLUSTER --task-definition $AWS_DEPLOY_TASK_DEFINITION
 
 #
 ## MONGO & Rabbit

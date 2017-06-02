@@ -1,17 +1,17 @@
 version: '2'
 services:
-  web:
-    image: 091953829232.dkr.ecr.eu-central-1.amazonaws.com/node-boilerplate
-    mem_limit: 524288000
-    ports:
-    - 1337:1337
-    - 4040:4040
-    links:
-      - mongodb
-      - rabbit
+#  web:
+#    image: 091953829232.dkr.ecr.eu-central-1.amazonaws.com/node-boilerplate
+#    mem_limit: 524288000
+#    ports:
+#    - 1337:1337
+#    - 4040:4040
+#    links:
+#      - mongodb
+#      - rabbit
   mongodb:
     image: mongo:latest
-    mem_limit: 262144000
+    mem_limit: 524288000
     ports:
     - 27017:27017
   rabbit:
@@ -26,3 +26,4 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
+      - "61613:61613"
