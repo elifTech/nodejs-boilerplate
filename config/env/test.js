@@ -5,12 +5,7 @@ export default {
   port: 4040,
 
   mq: {
-    stomp: {
-      host: 'localhost',
-      port: 61613,
-      login: 'guest',
-      password: 'guest'
-    }
+    amqp: 'amqp://guest:guest@localhost/%2F'
   },
 
   mail: {

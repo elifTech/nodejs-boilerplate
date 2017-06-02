@@ -11,18 +11,6 @@ install:
   - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
   - sudo apt-get update && sudo apt-get install yarn
 
-before_script:
-  - sudo rabbitmq-plugins enable rabbitmq_stomp
-  - sudo service rabbitmq-server restart
-  - sudo rabbitmqctl status
-  - sudo rabbitmq-plugins list
-script:
-  - yarn
-  - yarn build
-  - yarn test
-  - yarn lint
-  - bash config/deployment/deploy.sh
-
 cache:
   directories:
   - node_modules
@@ -31,5 +19,5 @@ git:
 after_script:
   - yarn report-coverage
 
-#notifications:
-#  slack: eliftech:rXNsG1csijJulkvTRPzVDU3w
+notifications:
+  slack: eliftech:rXNsG1csijJulkvTRPzVDU3w

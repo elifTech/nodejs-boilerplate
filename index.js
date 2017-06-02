@@ -32,7 +32,7 @@ if (!module.parent) {
   async.auto({
     resources: next => app.services.resources.loadResources(next),
     resourcesHooks: next => app.services.resources.loadHooks(next),
-    tasks: next => app.services.tasks.loadPlugins(next),
+    tasks: next => app.services.tasks.init(next),
     socket: next => app.services.socket.init(next)
   }, () => {
     app.services.tasks.subscribe();
