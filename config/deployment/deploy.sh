@@ -10,6 +10,8 @@ AWS_DEPLOY_TASK_DEFINITION="console-$PROJECT_NAME-static"
 AWS_DEPLOY_SERVICE_NAME="$PROJECT_NAME-app"
 AWS_DEPLOY_CLUSTER="$PROJECT_NAME-cluster"
 
+export AWS_DEFAULT_REGION=$AWS_REGION
+
 REGISTER_TASK_MOD_FILE=`pwd`/config/deployment/task-definition-mod.json
 
 DOCKER_LOGIN=`aws ecr get-login --region $AWS_REGION`

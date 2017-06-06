@@ -30,6 +30,8 @@ sudo ecs-cli configure --region $AWS_REGION --access-key $AMI_AWS_KEY --secret-k
 ACCOUNT_ID="091953829232"
 YOUR_USER=$HOME
 
+export AWS_DEFAULT_REGION=$AWS_REGION
+
 DOCKERFILE_DIR=`pwd`
 REGISTER_TASK_FILE=`pwd`/config/deployment/task-definition.json
 REGISTER_TASK_MOD_FILE=`pwd`/config/deployment/task-definition-mod.json
