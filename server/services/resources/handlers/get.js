@@ -6,7 +6,7 @@ export default
 function getHandler(service, model, fields, schemaFields, req, res, cb) {
   res.set('x-service', 'resources');
 
-  const zipFields = _.mapValues(_.zipObject(fields), _.constant(1));
+  const zipFields = _.mapValues(_.zipObjectDeep(fields), _.constant(1));
   if (req.params._id || req.query.alias) {
     if (req.params._id) {
       req.query._id = req.params._id; // eslint-disable-line no-param-reassign
