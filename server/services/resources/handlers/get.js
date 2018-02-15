@@ -62,7 +62,12 @@ function getHandler(service, model, fields, schemaFields, req, res, cb) {
 function getDataOptions(req, next) {
   const opts = {};
   const { maxPerPage } = req.resource.options || {};
-  const { page, perPage, sort } = req.query;
+  const { page, sort } = req.query;
+  let { perPage } = req.query;
+  if (perPage) {
+    perPage = parseInt(perPage, 10);
+  }
+
 
   if (maxPerPage) {
     if (!(perPage && perPage <= maxPerPage)) {
