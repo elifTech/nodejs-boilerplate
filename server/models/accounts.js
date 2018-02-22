@@ -103,14 +103,15 @@ Schema.statics = {
   },
 
   /**
-   * List acounts in descending order of 'createdAt' timestamp.
+   * List accounts in descending order of 'createDate' timestamp.
    * @param {number} skip - Number of accounts to be skipped.
    * @param {number} limit - Limit number of accounts to be returned.
+   * @param {object} filter - Filter accounts by query.
    * @returns {Promise<Account[]>}
    */
-  list({ skip = 0, limit = 50 } = {}) {
-    return this.find()
-      .sort({ createdAt: -1 })
+  list({ skip = 0, limit = 50, filter = {} } = {}) {
+    return this.find(filter)
+      .sort({ createDate: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
